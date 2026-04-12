@@ -74,7 +74,7 @@ ${langNote}
       body: JSON.stringify({
         model: 'openai/gpt-oss-120b',
         messages,
-        max_tokens: 200,
+        max_tokens: 400,
         temperature: 0.6,
       }),
     });
