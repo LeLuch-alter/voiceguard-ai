@@ -134,7 +134,7 @@ body{font-family:'Sora',sans-serif;background:#08050f;color:#fff;min-height:100v
 <!-- ═══ AUTH PAGE ═══ -->
 <div class="page active" id="auth-page">
   <div class="card">
-    <div class="logo">V</div>
+    <div class="logo"><img src="/logo.png" style="width:36px;height:36px;object-fit:contain;"/></div>
     <h1 id="auth-title">Login</h1>
     <p class="sub">VoiceGuard AI · Smart Business Assistant</p>
 
@@ -176,7 +176,7 @@ body{font-family:'Sora',sans-serif;background:#08050f;color:#fff;min-height:100v
   <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="brand">
-      <div class="brand-ico" style="background:var(--primary)">V</div>
+      <div class="brand-ico" style="background:transparent"><img src="/logo.png" style="width:28px;height:28px;object-fit:contain;"/></div>
       <div>
         <div class="brand-name">VoiceGuard AI</div>
         <div class="brand-sub">Business Assistant</div>
@@ -451,7 +451,11 @@ function renderMessages(){
     const av = document.createElement('div');
     av.className = 'avatar ' + (m.role === 'user' ? 'usr' : 'bot');
     av.style.background = m.role === 'user' ? 'rgba(255,255,255,.12)' : THEMES[theme].primary;
-    av.textContent = m.role === 'user' ? currentUser[0]?.toUpperCase() : 'V';
+    if(m.role === 'user'){
+      av.textContent = currentUser[0]?.toUpperCase();
+    } else {
+      av.innerHTML = '<img src="/logo.png" style="width:20px;height:20px;object-fit:contain;"/>';
+    }
     const bub = document.createElement('div');
     bub.className = 'bubble ' + (m.role === 'user' ? 'user' : 'bot');
     if(m.role === 'user'){ bub.style.background = THEMES[theme].primary; bub.style.boxShadow = `0 4px 14px ${THEMES[theme].glow}`; }
@@ -494,26 +498,17 @@ async function sendMessage(preset){
   document.getElementById('send-btn').disabled = true;
   showTyping();
 
-  const SYSTEM = `You are VoiceGuard AI — an intelligent business assistant built for Kazakhstani businesses.
-You help clients with information about services, answer questions honestly, and guide them kindly.
-You NEVER lie, pressure, or use rude language. You are neutral, helpful, and professional.
-If a client wants to pay or speak to a manager, say a human manager will contact them.
-${L[lang].systemEn}
-
-About VoiceGuard AI platform:
-- Module 1: AI sales & customer service — handles calls 24/7, drives sales without operators
-- Module 2: Fraud Shield — detects fraud in real time using voice pattern analysis
-- Module 3: AI Tutor — gives personalized trial lessons before clients commit to buying a course
-Clients can always switch to a human operator at any time.`;
 
   try {
     const res = await fetch('/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message: text, history: messages.slice(-10), lang })
-  });
-  const data = await res.json();
-  const reply = data.reply || "Sorry, I couldn't respond. Please try again.";
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, history: messages.slice(-10), lang })
+    });
+    const data = await res.json();
+    const reply = data.reply || "Sorry, I couldn't respond. Please try again.";
+    removeTyping();
+    messages.push({ role:'assistant', text: reply, id: Date.now()+1 });
 
   } catch(e) {
     removeTyping();
