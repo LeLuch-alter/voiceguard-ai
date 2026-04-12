@@ -139,7 +139,7 @@ body{font-family:'Sora',sans-serif;background:#08050f;color:#fff;min-height:100v
     <p class="sub">VoiceGuard AI · Smart Business Assistant</p>
 
     <div class="api-notice">
-      🔑 First time? Add your Groq API key in the chat settings after login.
+      🔑 First time? Register first.
     </div>
 
     <div class="err-box" id="err-box">Error message</div>
@@ -200,13 +200,6 @@ body{font-family:'Sora',sans-serif;background:#08050f;color:#fff;min-height:100v
           <button class="lbtn" onclick="setLang('ru')">RU</button>
           <button class="lbtn" onclick="setLang('kz')">KZ</button>
         </div>
-      </div>
-      <div>
-        <div class="s-label">Groq API Key</div>
-        <div class="field" style="margin:0">
-          <input id="api-key-inp" type="password" placeholder="gsk_..." style="font-size:.75rem;padding:.55rem .9rem;border-radius:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;width:100%;outline:none;font-family:'Sora',sans-serif"/>
-        </div>
-        <button class="sb-btn" style="margin-top:6px;justify-content:center" onclick="saveKey()">💾 Save Key</button>
       </div>
     </div>
 
@@ -273,6 +266,8 @@ let theme = 'purple';
 let messages = [];
 let loading = false;
 let currentUser = '';
+let groqKey = '';
+
 
 // ─── INIT ───
 function init(){
@@ -292,6 +287,7 @@ function init(){
     ta.style.height = Math.min(ta.scrollHeight, 110) + 'px';
   });
 }
+
 
 // ─── THEME ───
 function applyTheme(t){
@@ -340,6 +336,7 @@ function setLang(l){
   }
 }
 
+// ─── LABELS ───
 function updateLabels(){
   const t = L[lang];
   document.getElementById('msg-input').placeholder = t.placeholder;
