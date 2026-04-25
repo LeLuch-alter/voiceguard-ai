@@ -633,7 +633,8 @@ function buildSwatches(){
 (async function init(){
   function setVh(){document.documentElement.style.setProperty('--vh',window.innerHeight*.01+'px');}
   setVh();window.addEventListener('resize',setVh);
-  applyTheme(localStorage.getItem('vg_theme')||'grey');
+  const saved = localStorage.getItem('vg_theme');
+  applyTheme(saved && saved !== 'white' ? saved : 'grey');
   buildSwatches();buildPresets();updateLabels();
   const ta=document.getElementById('msg-input');
   ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}});
