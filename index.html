@@ -442,13 +442,18 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let pendingMsg='';
 function showLanding(){document.getElementById('view-landing').classList.add('active');document.getElementById('view-chat').classList.remove('active');document.body.style.overflow='';}
 function showChatView(msg){
+  if(!localStorage.getItem('vg_theme')) {
+  localStorage.setItem('vg_theme', 'grey');
+  }
   pendingMsg=msg||'';
   document.getElementById('view-landing').classList.remove('active');
   document.getElementById('view-chat').classList.add('active');
   document.body.style.overflow='hidden';
   if(currentUser){document.getElementById('auth-page').classList.remove('active');document.getElementById('chat-page').classList.add('active');if(pendingMsg){setTimeout(()=>{sendMsg(pendingMsg);pendingMsg='';},350);}}
   else{document.getElementById('auth-page').classList.add('active');document.getElementById('chat-page').classList.remove('active');}
-  applyTheme(localStorage.getItem('vg_theme')||'grey');
+  const saved = localStorage.getItem('vg_theme');
+  const validThemes = ['grey', 'blue', 'white'];
+  applyTheme(validThemes.includes(saved) ? saved : 'grey');
 }
 function goSec(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth'});}
 function closeMM(){document.getElementById('mobileMenu').classList.remove('open');}
