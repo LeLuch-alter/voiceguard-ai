@@ -1,46 +1,57 @@
+async function sendTelegram(text) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chatId) return;
+  await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML' })
+  });
+}
+ 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).end();
-
+ 
   const key = process.env.GROQ_API_KEY;
   if (!key) return res.status(200).json({ reply: 'ERROR: API key not found in environment' });
-
+ 
   const { message, history = [], lang = 'en' } = req.body;
-
+ 
   const langNote =
     lang === 'ru' ? 'Always respond in Russian.' :
     lang === 'kz' ? 'Always respond in Kazakh.' :
     'Always respond in English.';
-
+ 
   const systemPrompt = `Ты — вежливый и профессиональный ИИ-ассистент стоматологической клиники.
   Ты помогаешь пациентам узнать цены, записаться на приём и получить общую информацию.
   Ты НИКОГДА не ставишь диагнозы и не даёшь медицинских советов — только информация и запись.
   Если пациент хочет записаться — скажи что администратор свяжется с ним в ближайшее время.
   Если вопрос не касается стоматологии — вежливо переведи тему обратно.
   ${langNote}
-
+ 
   --- ПРАЙС-ЛИСТ КЛИНИКИ ---
-
+ 
   ТЕРАПИЯ:
   - Лечение кариеса — от 25 000 до 40 000 тг (зависит от сложности и зуба)
   - Лечение пульпита / периодонтита — от 30 000 до 55 000 тг (зависит от зуба и стадии)
-
+ 
   ХИРУРГИЯ:
   - Резекция коронки зуба — 25 000 тг (1 зуб)
   - Разрез десны с анестезией — 10 000 тг (1 зуб)
   - Наложение и снятие швов — 8 000 тг (1 шов)
   - Пластика уздечки — 25 000 тг (1 операция)
-
+ 
   ИМПЛАНТОЛОГИЯ:
   - Имплантат Израиль — 120 000 тг (1 операция)
   - Имплантат DIO Корея — 140 000 тг (1 операция)
   - Имплантат Германия / Швейцария / США — 300 000 тг (1 операция)
   - Синус-лифтинг — 400 000 тг (1 сегмент)
   - Наращивание костной ткани челюсти — 300 000 тг (1 сегмент)
-
+ 
   КОРОНКИ И ПРОТЕЗИРОВАНИЕ:
   - Снятие слепка двухслойное — 5 000 тг (1 челюсть)
   - Снятие слепка альгинатной массой — 3 000 тг (1 челюсть)
@@ -55,7 +66,7 @@ export default async function handler(req, res) {
   - Культевая металлическая вкладка — 20 000 тг (1 единица)
   - Керамическая вкладка — 50 000 тг (1 единица)
   - Снятие штампованных / металлокерамических / цельнолитых коронок — 3 000 тг (1 единица)
-
+ 
   ОРТОДОНТИЯ:
   - Диагностика — 5 000 тг (1 посещение)
   - Металлическая брекет-система — от 80 000 тг (1 челюсть)
@@ -70,19 +81,19 @@ export default async function handler(req, res) {
   - Снятие брекет-системы — 20 000 тг (1 челюсть)
   - Установка ретейнера — 20 000 тг (1 посещение)
   - Снятие ретейнера — 10 000 тг (1 посещение)
-
+ 
   --- ПРАВИЛА ОБЩЕНИЯ ---
   - Если услуги нет в прайсе — отвечай: "Стоимость зависит от сложности и конкретного зуба, точную цену назовёт врач на осмотре. Хотите записаться на консультацию?"
   - Никогда не ставь диагнозы и не рекомендуй конкретное лечение
   - Всегда вежлив, спокоен, профессионален
   - При желании записаться — скажи что администратор перезвонит в ближайшее время
   - Не придумывай цены которых нет в прайсе
-  - Старайся не писать "**", "~~", "__" и другие спецсимволы — только обычный текст. Если нужно выделить слово — используй кавычки или просто пиши его с заглавной буквы.
-  - Если вопрос не по теме стоматологии — вежливо переведи разговор обратно к услугам клиники и записи на приём.
-  - Всегда отвечай на языке пациента, если пациент сперва напишет на одном из языков и потом переключится на другой ты тоже должен переключиться и не стоит переключайся без необходимости.
-  - Не используй эмодзи, стикеры, картинки и другие мультимедийные элементы — только текст.
-  - Используй переводы строки при написании длинных сообщений для лучшей читаемости.`;   
-
+  - Старайся не писать **что-то**, "__" и другие спецсимволы — только обычный текст
+  - Если вопрос не по теме стоматологии — вежливо переведи разговор обратно к услугам клиники
+  - Всегда отвечай на языке пациента
+  - Не используй эмодзи — только текст
+  - Используй абзацы для структурирования информации`;
+ 
   const messages = [
     { role: 'system', content: systemPrompt },
     ...history.slice(-10).map(m => ({
@@ -91,7 +102,7 @@ export default async function handler(req, res) {
     })),
     { role: 'user', content: message },
   ];
-
+ 
   try {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -106,16 +117,25 @@ export default async function handler(req, res) {
         temperature: 0.6,
       }),
     });
-
+ 
     const data = await response.json();
-
+ 
     if (data.error) {
       return res.status(200).json({ reply: `Groq error: ${data.error.message}` });
     }
-
+ 
     const reply = data.choices?.[0]?.message?.content
       || "Sorry, I couldn't process that. Please try again.";
-
+ 
+    // Telegram уведомление если клиент хочет записаться
+    const wantsAppointment = /запис|консультац|приём|прийти|хочу попасть|хочу прийти/i.test(message);
+    if (wantsAppointment) {
+      await sendTelegram(
+        `🦷 <b>Новый запрос на запись!</b>\n\n` +
+        `💬 Сообщение пациента:\n${message}`
+      );
+    }
+ 
     return res.status(200).json({ reply });
   } catch (err) {
     return res.status(200).json({ reply: `Server error: ${err.message}` });
