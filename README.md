@@ -1,99 +1,102 @@
-# VoiceGuard AI
+# Voice AI
 
-ИИ-оператор (голосовой и текстовый чат-ассистент) для коммерческих компаний. Клиент
-открывает страницу, сразу попадает в чат и общается с ИИ голосом или текстом: узнаёт об
-услугах и ценах, оставляет заявку. Проект универсальный и настраивается под любую компанию.
+AI operator (voice and text chat assistant) for commercial companies. The client
+opens the page, immediately enters the chat, and communicates with the AI ​​via voice or text: learns about
+services and prices, and submits a request. This project is universal and harmful to any company.
 
-**Демо:** https://voiceguard-ai-beta.vercel.app/
+**Demo:** https://voiceguard-ai-beta.vercel.app/
 
-Название отражает три опоры проекта: **Voice** (голос) · **Guard** (защита) · **AI** (оператор).
+The project's three pillars are: **Voice** (voice) **Guard** (protection) **AI** (operator).
 
-## Возможности
+## Features
 
-- **Голос и текст.** Голосовой ввод (микрофон → распознавание речи) и озвучка ответов.
-  Авто-стоп записи по тишине (VAD) — говорить можно без удержания кнопки.
-- **Без логина.** Чат открывается сразу. История хранится локально в браузере, без базы данных.
-- **Приватность (Guard).** Аудио и переписка не сохраняются на сервере. Явное согласие на
-  микрофон, режим «не хранить историю», ограничение CORS, заголовки безопасности.
-- **Человек в контуре.** Когда ИИ не справляется, клиент оставляет имя и телефон — оператору
-  приходит уведомление в Telegram с контекстом диалога.
-- **База знаний.** ИИ отвечает на основе файла `knowledge.md`, который компания заполняет
-  своими услугами, ценами и FAQ; чего нет в файле — не выдумывает.
-- **Виджет на сайт.** Встраивается на любой сайт плавающей кнопкой-чатом одной строкой кода.
-- **Темы и языки.** Три темы оформления (серая / синяя / белая) и три языка интерфейса и
-  ответов: RU / EN / KZ.
-- **Минималистичный интерфейс** на чистом HTML/CSS/JS, без фреймворков и сборки.
+- **Voice and text.** Voice input (microphone → speech recognition) and voice-over responses.
 
-## Технологии
+Automatic recording stop on silence (VAD) — you can speak without holding down the button.
+- **No login required.** Chat opens immediately. History is stored locally in the browser, without a database.
+- **Privacy (Security).** Audio and messaging are region-independent. Explicit agreement on
+microphone, "do not store history" mode, CORS restrictions, security headers.
+- **Human in the loop.** If the AI ​​fails, the client leaves their name and phone number with the operator.
 
-- **Фронтенд:** один файл `index.html` (vanilla JS, без npm и build-шага).
-- **Бэкенд:** serverless-функции в `api/` (формат Vercel Functions, ESM).
-- **LLM:** GROQ API (модель `openai/gpt-oss-120b`).
-- **Распознавание речи (STT):** GROQ Whisper (`whisper-large-v3-turbo`).
-- **Озвучка (TTS):** браузерный SpeechSynthesis.
-- **Хостинг:** Vercel.
+in Telegram with the context of the conversation.
+- **Knowledge base.** The AI ​​responds based on the 'knowledge.md' file, which the company maintains.
 
-## Структура
+with its services, prices, and FAQs; it doesn't invent what's not in the file.
+- **Website widget.** Harm on any website is caused by clicking on a single line of code.
+- **Themes and languages.** Three theme designs (gray/blue/white) and three language interfaces and
+responses: RU/EN/KZ.
+- **Minimalistic interface** with pure HTML/CSS/JS, no frames or assembly.
+
+## Technologies
+
+- **Frontend:** a single `index.html` file (vanilla JS, no npm or build step).
+- **Backend:** serverless functions in `api/` (Vercel Functions format, ESM).
+- **LLM:** GROQ API (model `openai/gpt-oss-120b`).
+- **Speech recognition (STT):** GROQ Whisper ("whisper-big-v3-turbo").
+- **TTS:** browser-based speech synthesis.
+- **Hosting:** Vercel.
+
+## Structure
 
 ```
-index.html          Весь фронтенд: чат, голос, темы, языки, приватность
-embed.js             Встраиваемый виджет чата для сайта компании
-knowledge.md         База знаний компании (источник правды для ИИ)
-api/chat.js          Прокси к GROQ (текстовые ответы) + база знаний + заявки
-api/transcribe.js    Распознавание речи через GROQ Whisper
-api/escalate.js      Эскалация на оператора (уведомление в Telegram)
-vercel.json          Заголовки безопасности
-.env.example         Пример переменных окружения
-ROADMAP.md           План работ
+index.html Entire frontend: chat, voice, topics, languages, privacy
+embed.js Embeddable chat widget for the company website
+Knowledge.md Company knowledge base (source of truth for AI)
+api/chat.js Proxy to GROQ (text responses) + knowledge base + tickets
+api/transcribe.js Speech recognition via GROQ Whisper
+api/escalate.js Operator escalation (Telegram notification)
+vercel.json Security headers
+.env.example Environment usage example
+ROADMAP.md Work plan
 ```
 
-## Настройка под компанию (база знаний)
+## Company customization (knowledge base)
 
-ИИ отвечает на основе файла `knowledge.md` — заполните его информацией о вашей компании
-(услуги, цены, часы работы, контакты, частые вопросы) обычным текстом. Чего нет в файле —
-ИИ не выдумывает, а предлагает оставить заявку. После изменения файла переразверните проект.
+AI is responsible for the basis of the `knowledge.md` file – fill it with information about your company
+(services, prices, business hours, contacts, private questions) in plain text. What's not in the file?
+I'm not making this up; I suggest you submit a request. After changing the file, redeploy the project.
 
-## Виджет на сайт компании
+## Widget on a company website
 
-Чтобы добавить чат на чужой сайт плавающей кнопкой, вставьте одну строку перед `</body>`:
+To add a chat button to someone else's website as a floating button, insert one line of text before the </body>:
 
 ```html
 <script src="https://voiceguard-ai-beta.vercel.app/embed.js" data-color="#2563eb"></script>
 ```
 
-Атрибут `data-color` (необязательно) задаёт цвет кнопки под бренд компании.
+The `data-color` attribute (optional) sets the color of the button, matching the company's branding.
 
-## Переменные окружения
+## Environment Variables
 
-Задаются в настройках Vercel (Environment Variables) или в `.env` для локального запуска.
-Секреты в репозиторий не коммитятся.
+Set as part of Vercel (environment variables) or in `.env` for local execution.
+Secrets in repositories are not committed.
 
-| Переменная | Назначение | Обязательна |
+| Variable | Purpose | Required |
 |---|---|---|
-| `GROQ_API_KEY` | Ключ GROQ API (чат и распознавание речи) | Да |
-| `COMPANY_NAME` | Название компании для промпта ИИ | Нет |
-| `TELEGRAM_BOT_TOKEN` | Токен Telegram-бота для уведомлений о заявках/эскалациях | Нет |
-| `TELEGRAM_CHAT_ID` | ID чата/канала для уведомлений | Нет |
-| `ALLOWED_ORIGINS` | Разрешённые источники для API (CORS), через запятую | Нет |
+| `GROQ_API_KEY` | GROQ API key (chat and speech recognition) | Yes |
+| `COMPANY_NAME` | Company name for Prompt II | No |
+| `TELEGRAM_BOT_TOKEN` | Telegram bot token for ticket/escalation notifications | No |
+| `TELEGRAM_CHAT_ID` | Chat/channel ID for registration | No |
+| `ALLOWED_ORIGINS` | Allowed origins for the API (CORS), comma-separated | No |
 
-## Локальный запуск
+## Local Run
 
-Статику можно открыть напрямую, но эндпоинты `/api/*` и микрофон работают только под
-Vercel-окружением (HTTPS). Для полноценной разработки:
+Static files can be accessed directly, but the `/api/*` endpoints and microphone only work under the
+Versel environment (HTTPS). For full-fledged development:
 
-```bash
+``` bash
 npm i -g vercel
-vercel dev
+Versel developer
 ```
 
-Нужен файл `.env` с `GROQ_API_KEY` (см. `.env.example`).
+A `.env` file with `GROQ_API_KEY` is required (see `.env.example`).
 
-## Деплой на Vercel
+## Deployment to Vercel
 
-1. Подключите репозиторий к Vercel (Import Project).
-2. Добавьте переменные окружения из таблицы выше.
-3. Deploy. Статика и функции из `api/` поднимутся автоматически.
+1. Connect the repository to Vercel (Import Project).
+2. Add the environment variables from the table above.
+3. Deploy. Stats and functions from `api/` are automatically picked up.
 
-## Лицензия
+## License
 
-MIT.
+Massachusetts Institute of Technology.
