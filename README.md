@@ -1,4 +1,4 @@
-# VoiceGuard AI
+# Voice AI
 
 An AI operator (voice and text chat assistant) for businesses. The client
 opens the page, immediately enters the chat, and communicates with the AI ​​via voice or text: learns about
@@ -81,9 +81,9 @@ Secrets are not committed to the repository.
 
 Static files can be accessed directly, but the `/api/*` endpoints and microphone only work in the Vercel environment (HTTPS). For full-fledged development:
 
-```bash
+``` bash
 npm i -g vercel
-vercel dev
+Versel developer
 ```
 
 A `.env` file with `GROQ_API_KEY` is required (see `.env.example`).
