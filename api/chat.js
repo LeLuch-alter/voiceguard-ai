@@ -1,3 +1,21 @@
+// Ограничение CORS: по умолчанию разрешаем только localhost и *.vercel.app.
+// Для своего домена задайте ALLOWED_ORIGINS (через запятую) в переменных окружения.
+function applyCors(req, res) {
+  const allowed = (process.env.ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+  const origin = req.headers.origin;
+  if (origin) {
+    const ok = allowed.length
+      ? allowed.includes(origin)
+      : /^(https?:\/\/localhost(:\d+)?|https:\/\/[a-z0-9-]+\.vercel\.app)$/i.test(origin);
+    if (ok) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Vary', 'Origin');
+    }
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+}
+
 async function sendTelegram(text) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
@@ -9,17 +27,22 @@ async function sendTelegram(text) {
   });
 }
 
+// Приватность: сообщения не логируются и нигде не сохраняются на сервере —
+// функция без состояния, просто проксирует запрос в GROQ.
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  applyCors(req, res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).end();
 
   const key = process.env.GROQ_API_KEY;
   if (!key) return res.status(200).json({ reply: 'ERROR: API key not found in environment' });
 
-  const { message, history = [], lang = 'en' } = req.body;
+  const { message, history = [], lang = 'en' } = req.body || {};
+
+  // Защита от слишком больших/некорректных запросов.
+  if (typeof message !== 'string' || !message.trim() || message.length > 4000) {
+    return res.status(400).json({ reply: 'Некорректное сообщение.' });
+  }
 
   const langNote =
     lang === 'ru' ? 'Always respond in Russian.' :

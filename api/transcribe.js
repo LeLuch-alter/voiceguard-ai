@@ -14,10 +14,28 @@ function extFromMime(mime = '') {
   return 'webm';
 }
 
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+// Ограничение CORS: по умолчанию только localhost и *.vercel.app.
+// Свой домен — через переменную ALLOWED_ORIGINS (список через запятую).
+function applyCors(req, res) {
+  const allowed = (process.env.ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+  const origin = req.headers.origin;
+  if (origin) {
+    const ok = allowed.length
+      ? allowed.includes(origin)
+      : /^(https?:\/\/localhost(:\d+)?|https:\/\/[a-z0-9-]+\.vercel\.app)$/i.test(origin);
+    if (ok) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Vary', 'Origin');
+    }
+  }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+}
+
+// Приватность: аудио используется только для распознавания и нигде не сохраняется —
+// после ответа GROQ буфер исчезает вместе с завершением функции.
+export default async function handler(req, res) {
+  applyCors(req, res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).end();
 
@@ -25,7 +43,8 @@ export default async function handler(req, res) {
   if (!key) return res.status(200).json({ text: '', error: 'API key not found' });
 
   const { audio, mime = 'audio/webm', lang = 'en' } = req.body || {};
-  if (!audio) return res.status(200).json({ text: '', error: 'No audio' });
+  if (!audio || typeof audio !== 'string') return res.status(200).json({ text: '', error: 'No audio' });
+  if (audio.length > 8000000) return res.status(413).json({ text: '', error: 'Audio too large' });
 
   try {
     const buffer = Buffer.from(audio, 'base64');

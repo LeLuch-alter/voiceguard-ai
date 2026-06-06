@@ -87,8 +87,32 @@ body{font-family:var(--font);overflow-x:hidden}
 .mic-btn:disabled{opacity:.35;cursor:not-allowed}
 .mic-btn.rec{background:#ef4444;border-color:#ef4444;color:#fff;animation:micpulse 1.2s ease-in-out infinite}
 @keyframes micpulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5)}50%{box-shadow:0 0 0 7px rgba(239,68,68,0)}}
-.voice-toggle{background:transparent;border:none;cursor:pointer;font-size:15px;line-height:1;opacity:.4;padding:2px;transition:opacity .2s}
+.voice-toggle{background:transparent;border:none;cursor:pointer;line-height:1;opacity:.45;padding:2px;display:flex;align-items:center;transition:opacity .2s}
+.voice-toggle:hover{opacity:.8}
 .voice-toggle.on{opacity:1}
+.sb-btn svg{width:16px;height:16px;flex-shrink:0}
+.mic-btn svg,.send-btn svg{width:18px;height:18px}
+.voice-toggle svg{width:18px;height:18px}
+.c-hamburger svg{width:22px;height:22px}
+.sidebar-close svg{width:18px;height:18px}
+.pv-switch{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.72rem;color:rgba(255,255,255,.55);cursor:pointer}
+.pv-switch input{accent-color:var(--primary);width:15px;height:15px;cursor:pointer;flex-shrink:0}
+.pv-textlink{margin-top:.5rem;background:transparent;border:none;color:var(--primary);font-family:'Sora',sans-serif;font-size:.72rem;cursor:pointer;padding:0;text-align:left}
+.pv-textlink:hover{text-decoration:underline}
+.pv-overlay{display:none;position:fixed;inset:0;z-index:50;align-items:center;justify-content:center;padding:1rem;background:rgba(0,0,0,.55);backdrop-filter:blur(4px)}
+.pv-overlay.open{display:flex}
+.pv-card{width:100%;max-width:380px;border-radius:18px;padding:1.6rem 1.5rem;border:1px solid rgba(255,255,255,.13);background:#1f2124;color:#fff;box-shadow:0 24px 70px rgba(0,0,0,.5);animation:pvUp .35s cubic-bezier(.16,1,.3,1)}
+@keyframes pvUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.pv-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--primary);margin-bottom:1rem}
+.pv-icon svg{width:24px;height:24px;color:#fff}
+.pv-card h3{font-size:1.05rem;font-weight:600;margin-bottom:.5rem}
+.pv-card p{font-size:.83rem;line-height:1.6;opacity:.75;margin-bottom:1.3rem}
+.pv-actions{display:flex;gap:.6rem;justify-content:flex-end}
+.pv-actions button{font-family:'Sora',sans-serif;font-size:.82rem;font-weight:600;border-radius:9px;padding:.55rem 1.1rem;cursor:pointer;border:1px solid transparent;transition:filter .2s,opacity .2s}
+.pv-cancel{background:transparent;border-color:rgba(255,255,255,.18);color:inherit;opacity:.7}
+.pv-cancel:hover{opacity:1}
+.pv-ok{background:var(--primary);color:#fff}
+.pv-ok:hover{filter:brightness(1.08)}
 @media(max-width:640px){
   .sidebar{position:fixed;left:0;top:0;height:100vh;transform:translateX(-100%);box-shadow:4px 0 32px rgba(0,0,0,.6);overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   .sidebar.open{transform:translateX(0)}
@@ -114,7 +138,7 @@ body{font-family:var(--font);overflow-x:hidden}
       <div class="brand">
         <div class="brand-ico"><img src="logo.png" style="width:120px;height:120px;object-fit:contain;border-radius:10px;"/></div>
         <div><div class="brand-name">VoiceGuard AI</div><div class="brand-sub">Your AI Operator</div></div>
-        <button class="sidebar-close" onclick="closeSB()">✕</button>
+        <button class="sidebar-close" onclick="closeSB()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>
       <div class="sb-label">Быстрые вопросы</div>
       <div id="presets"></div>
@@ -122,24 +146,34 @@ body{font-family:var(--font);overflow-x:hidden}
       <div id="settings-panel" class="settings-panel" style="display:none">
         <div><div class="s-label">Тема</div><div class="swatches" id="swatches"></div></div>
         <div><div class="s-label">Язык</div><div class="lang-row"><button class="lbtn on" onclick="setLang('ru',this)">RU</button><button class="lbtn" onclick="setLang('en',this)">EN</button><button class="lbtn" onclick="setLang('kz',this)">KZ</button></div></div>
+        <div><div class="s-label" id="lbl-privacy">Приватность</div><label class="pv-switch"><span id="lbl-persist">Хранить историю</span><input type="checkbox" id="cb-persist" onchange="togglePersist()"/></label><button class="pv-textlink" id="btn-privacy" onclick="showPrivacy()">Политика приватности</button></div>
       </div>
-      <button class="sb-btn" onclick="toggleSettings()">⚙️ <span id="sb-settings">Настройки</span></button>
-      <button class="sb-btn" onclick="clearChat()">🗑️ <span id="sb-clear">Очистить чат</span></button>
+      <button class="sb-btn" onclick="toggleSettings()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> <span id="sb-settings">Настройки</span></button>
+      <button class="sb-btn" onclick="clearChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg> <span id="sb-clear">Очистить чат</span></button>
     </div>
     <div class="main">
       <div class="chat-header">
-        <button class="c-hamburger" onclick="openSB()">☰</button>
+        <button class="c-hamburger" onclick="openSB()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
         <div class="dot"></div>
         <span class="header-title">VoiceGuard AI</span>
         <div class="header-right">
           <span class="header-sub" id="header-sub">Онлайн · Готов помочь</span>
-          <button class="voice-toggle" id="voice-toggle" onclick="toggleVoice()" title="Озвучивать ответы">🔈</button>
+          <button class="voice-toggle" id="voice-toggle" onclick="toggleVoice()" title="Озвучивать ответы"></button>
           <button class="clear-btn" onclick="clearChat()" id="hdr-clear">Очистить</button>
         </div>
       </div>
       <div class="messages" id="messages"></div>
-      <div class="input-area"><div class="input-row"><textarea id="msg-input" rows="1" placeholder="Задайте вопрос..."></textarea><button class="mic-btn" id="mic-btn" onclick="toggleMic()" title="Голосовой ввод">🎤</button><button class="send-btn" id="send-btn" onclick="sendMsg()" title="Отправить">➤</button></div></div>
+      <div class="input-area"><div class="input-row"><textarea id="msg-input" rows="1" placeholder="Задайте вопрос..."></textarea><button class="mic-btn" id="mic-btn" onclick="toggleMic()" title="Голосовой ввод"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button><button class="send-btn" id="send-btn" onclick="sendMsg()" title="Отправить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div></div>
     </div>
+  </div>
+</div>
+
+<div class="pv-overlay" id="pv-overlay" onclick="if(event.target===this)closePv()">
+  <div class="pv-card" id="pv-card">
+    <div class="pv-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+    <h3 id="pv-title">Доступ к микрофону</h3>
+    <p id="pv-text"></p>
+    <div class="pv-actions"><button class="pv-cancel" id="pv-cancel" onclick="closePv()">Отмена</button><button class="pv-ok" id="pv-ok" onclick="allowMic()">Разрешить</button></div>
   </div>
 </div>
 
@@ -162,14 +196,26 @@ const STATES={
   kz:{ready:'Онлайн · Көмекке дайын',listen:'Тыңдап тұрмын...',proc:'Танып жатырмын...',speak:'Айтып жатырмын...',nomic:'Микрофонға рұқсат жоқ',empty:'Естімедім, қайталаңыз'},
 };
 const SR_LANG={ru:'ru-RU',en:'en-US',kz:'kk-KZ'};
+const IC_VOL_ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>';
+const IC_VOL_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>';
+const PV={
+  ru:{title:'Доступ к микрофону',ptitle:'Политика приватности',text:'Голос используется только для распознавания речи и сразу удаляется — на сервере он не сохраняется. История переписки хранится только локально на вашем устройстве; её можно отключить или очистить в любой момент.',ok:'Разрешить',cancel:'Отмена',close:'Понятно',privacy:'Приватность',persist:'Хранить историю'},
+  en:{title:'Microphone access',ptitle:'Privacy policy',text:'Your voice is used only for speech recognition and is discarded immediately — nothing is stored on the server. Chat history is kept locally on your device only; you can disable or clear it anytime.',ok:'Allow',cancel:'Cancel',close:'Got it',privacy:'Privacy',persist:'Keep history'},
+  kz:{title:'Микрофонға рұқсат',ptitle:'Құпиялылық саясаты',text:'Дауысыңыз тек сөзді тану үшін қолданылады және бірден жойылады — серверде сақталмайды. Чат тарихы тек құрылғыңызда сақталады; оны кез келген уақытта өшіруге не тазалауға болады.',ok:'Рұқсат',cancel:'Бас тарту',close:'Түсінікті',privacy:'Құпиялылық',persist:'Тарихты сақтау'},
+};
 
 let cLang='ru',theme='grey',msgs=[],loading=false;
 let voiceOn=localStorage.getItem('vg_voice')==='1';
+let persist=localStorage.getItem('vg_persist')!=='0';
 let mediaRecorder=null,audioChunks=[],recording=false;
+let audioCtx=null,analyser=null,vadRAF=null,vadData=null,speechStarted=false,lastSound=0,recStart=0;
+let ttsVoices=[];
+const VAD_THRESH=0.018,VAD_SILENCE_MS=1300,VAD_MIN_MS=600,VAD_MAX_MS=20000,VAD_NOSPEECH_MS=5000;
 const currentUser='Вы';
 
 /* LOCAL STORAGE */
-function saveMsgs(){try{localStorage.setItem(STORE_KEY,JSON.stringify(msgs));}catch(e){}}
+function saveMsgs(){if(!persist)return;try{localStorage.setItem(STORE_KEY,JSON.stringify(msgs));}catch(e){}}
+function togglePersist(){persist=document.getElementById('cb-persist').checked;localStorage.setItem('vg_persist',persist?'1':'0');if(!persist){try{localStorage.removeItem(STORE_KEY);}catch(e){}}else{saveMsgs();}}
 function loadMsgs(){
   try{
     const raw=localStorage.getItem(STORE_KEY);
@@ -187,7 +233,7 @@ function openSB(){document.getElementById('sidebar').classList.add('open');docum
 function closeSB(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('show');}
 function toggleSettings(){const p=document.getElementById('settings-panel');p.style.display=p.style.display==='none'?'flex':'none';p.style.flexDirection='column';}
 function setLang(l,btn){cLang=l;document.querySelectorAll('.lbtn').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');buildPresets();updateLabels();if(msgs.length>0&&msgs[0].role==='assistant'){msgs[0].text=LANGS[l].welcome;saveMsgs();renderMsgs();}if(!recording&&!loading)setState('ready');}
-function updateLabels(){const L=LANGS[cLang];const ta=document.getElementById('msg-input');if(ta)ta.placeholder=L.ph;const ss=document.getElementById('sb-settings');if(ss)ss.textContent=L.settings;const sc=document.getElementById('sb-clear');if(sc)sc.textContent=L.clear;const hc=document.getElementById('hdr-clear');if(hc)hc.textContent=L.clear;}
+function updateLabels(){const L=LANGS[cLang];const ta=document.getElementById('msg-input');if(ta)ta.placeholder=L.ph;const ss=document.getElementById('sb-settings');if(ss)ss.textContent=L.settings;const sc=document.getElementById('sb-clear');if(sc)sc.textContent=L.clear;const hc=document.getElementById('hdr-clear');if(hc)hc.textContent=L.clear;const P=PV[cLang]||PV.en;const lp=document.getElementById('lbl-privacy');if(lp)lp.textContent=P.privacy;const lpe=document.getElementById('lbl-persist');if(lpe)lpe.textContent=P.persist;const bp=document.getElementById('btn-privacy');if(bp)bp.textContent=P.ptitle;}
 function buildPresets(){const w=document.getElementById('presets');if(!w)return;w.innerHTML='';LANGS[cLang].presets.forEach(q=>{const b=document.createElement('button');b.className='preset';b.textContent=q;b.onclick=()=>{sendMsg(q);closeSB();};w.appendChild(b);});}
 
 function renderMsgs(){
@@ -237,10 +283,31 @@ async function sendMsg(preset,viaVoice){
 function setState(key){const el=document.getElementById('header-sub');if(el)el.textContent=(STATES[cLang]||STATES.en)[key]||'';}
 function setMicRec(on){const b=document.getElementById('mic-btn');if(b)b.classList.toggle('rec',on);}
 
-async function toggleMic(){
+function toggleMic(){
   if(recording){stopRec();return;}
   if(loading)return;
   if(!navigator.mediaDevices||!window.MediaRecorder){alert((STATES[cLang]||STATES.en).nomic);return;}
+  if(localStorage.getItem('vg_mic_consent')!=='1'){showConsent();return;}
+  startMic();
+}
+
+/* Согласие на микрофон / политика приватности */
+function openPv(mode){
+  const t=PV[cLang]||PV.en,c=THEMES[theme],ov=document.getElementById('pv-overlay'),card=document.getElementById('pv-card');
+  document.getElementById('pv-title').textContent=mode==='ask'?t.title:t.ptitle;
+  document.getElementById('pv-text').textContent=t.text;
+  const ok=document.getElementById('pv-ok'),cancel=document.getElementById('pv-cancel');
+  if(mode==='ask'){ok.textContent=t.ok;ok.onclick=allowMic;cancel.style.display='';cancel.textContent=t.cancel;}
+  else{ok.textContent=t.close;ok.onclick=closePv;cancel.style.display='none';}
+  card.style.background=c.cardBg;card.style.color=c.textColor;card.style.borderColor=c.cardBorder;
+  ov.classList.add('open');
+}
+function showConsent(){openPv('ask');}
+function showPrivacy(){closeSB();openPv('info');}
+function closePv(){document.getElementById('pv-overlay').classList.remove('open');}
+function allowMic(){localStorage.setItem('vg_mic_consent','1');closePv();startMic();}
+
+async function startMic(){
   try{
     const stream=await navigator.mediaDevices.getUserMedia({audio:true});
     stopSpeaking();
@@ -252,9 +319,35 @@ async function toggleMic(){
       await transcribeAndSend(blob);
     };
     mediaRecorder.start();recording=true;setMicRec(true);setState('listen');
+    startVAD(stream);
   }catch(e){setState('ready');alert((STATES[cLang]||STATES.en).nomic);}
 }
-function stopRec(){if(mediaRecorder&&recording){recording=false;setMicRec(false);try{mediaRecorder.stop();}catch(e){}}}
+function stopRec(){if(mediaRecorder&&recording){recording=false;setMicRec(false);stopVAD();try{mediaRecorder.stop();}catch(e){}}}
+
+/* VAD: авто-стоп записи по тишине */
+function startVAD(stream){
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+    audioCtx=new AC();if(audioCtx.state==='suspended')audioCtx.resume();
+    const src=audioCtx.createMediaStreamSource(stream);
+    analyser=audioCtx.createAnalyser();analyser.fftSize=1024;src.connect(analyser);
+    vadData=new Uint8Array(analyser.fftSize);
+    speechStarted=false;recStart=Date.now();lastSound=recStart;
+    const tick=()=>{
+      if(!recording||!analyser)return;
+      analyser.getByteTimeDomainData(vadData);
+      let sum=0;for(let i=0;i<vadData.length;i++){const x=(vadData[i]-128)/128;sum+=x*x;}
+      const rms=Math.sqrt(sum/vadData.length),now=Date.now(),elapsed=now-recStart;
+      if(rms>VAD_THRESH){speechStarted=true;lastSound=now;}
+      if(elapsed>VAD_MAX_MS){stopRec();return;}
+      if(!speechStarted&&elapsed>VAD_NOSPEECH_MS){stopRec();return;}
+      if(speechStarted&&elapsed>VAD_MIN_MS&&now-lastSound>VAD_SILENCE_MS){stopRec();return;}
+      vadRAF=requestAnimationFrame(tick);
+    };
+    vadRAF=requestAnimationFrame(tick);
+  }catch(e){}
+}
+function stopVAD(){if(vadRAF){cancelAnimationFrame(vadRAF);vadRAF=null;}analyser=null;if(audioCtx){try{audioCtx.close();}catch(e){}audioCtx=null;}}
 
 function blobToBase64(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onloadend=()=>resolve(String(r.result).split(',')[1]||'');r.onerror=reject;r.readAsDataURL(blob);});}
 
@@ -272,11 +365,21 @@ async function transcribeAndSend(blob){
 }
 
 /* VOICE: озвучка ответов (TTS) */
+function loadVoices(){if('speechSynthesis' in window)ttsVoices=window.speechSynthesis.getVoices()||[];}
+function pickVoice(lang){
+  const pref=(SR_LANG[lang]||'en-US').toLowerCase(),base=pref.split('-')[0];
+  const cands=ttsVoices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith(base));
+  if(!cands.length)return null;
+  const score=v=>{const n=(v.name||'').toLowerCase();let s=0;if(/natural|neural|premium|enhanced/.test(n))s+=4;if(/google/.test(n))s+=3;if(v.lang.toLowerCase()===pref)s+=2;if(v.localService)s+=1;return s;};
+  return cands.slice().sort((a,b)=>score(b)-score(a))[0];
+}
 function speak(text){
   if(!('speechSynthesis' in window))return;
   window.speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(text);
   u.lang=SR_LANG[cLang]||'en-US';
+  const v=pickVoice(cLang);if(v)u.voice=v;
+  u.rate=1.03;u.pitch=1;
   u.onstart=()=>setState('speak');
   u.onend=()=>{if(!recording&&!loading)setState('ready');};
   window.speechSynthesis.speak(u);
@@ -286,7 +389,7 @@ function toggleVoice(){
   voiceOn=!voiceOn;localStorage.setItem('vg_voice',voiceOn?'1':'0');
   updateVoiceBtn();if(!voiceOn)stopSpeaking();
 }
-function updateVoiceBtn(){const b=document.getElementById('voice-toggle');if(!b)return;b.classList.toggle('on',voiceOn);b.textContent=voiceOn?'🔊':'🔈';}
+function updateVoiceBtn(){const b=document.getElementById('voice-toggle');if(!b)return;b.classList.toggle('on',voiceOn);b.innerHTML=voiceOn?IC_VOL_ON:IC_VOL_OFF;}
 
 /* THEME */
 function applyTheme(t){
@@ -329,6 +432,8 @@ function buildSwatches(){
   applyTheme(saved&&THEMES[saved]?saved:'grey');
   buildSwatches();buildPresets();updateLabels();
   updateVoiceBtn();setState('ready');
+  const cbp=document.getElementById('cb-persist');if(cbp)cbp.checked=persist;
+  if('speechSynthesis' in window){loadVoices();window.speechSynthesis.onvoiceschanged=loadVoices;}
   loadMsgs();renderMsgs();
   const ta=document.getElementById('msg-input');
   ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}});
