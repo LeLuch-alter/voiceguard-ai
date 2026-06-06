@@ -3,145 +3,14 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Doctor-K Dental</title>
+<title>VoiceGuard AI</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--c1:#0e7aad;--c2:#06b6d4;--c3:#cffafe;--c4:#0891b2;--c5:#164e63;--c-light:#ecfeff;--font:'Sora',system-ui,sans-serif}
+:root{--font:'Sora',system-ui,sans-serif}
 html{scroll-behavior:smooth}
 body{font-family:var(--font);overflow-x:hidden}
-.view{display:none}
-.view.active{display:block}
-#view-chat.active{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden}
-.landing{color:#1e293b;background:#fff}
-.nav{background:#fff;border-bottom:1px solid #e0f2fe;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;position:sticky;top:0;z-index:100;box-shadow:0 1px 12px rgba(6,182,212,.08)}
-.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer}
-.nav-logo img{width:38px;height:38px;object-fit:contain;border-radius:8px}
-.nav-logo-text{font-size:18px;font-weight:600;color:var(--c5)}
-.nav-logo-text span{color:var(--c2)}
-.nav-links{display:flex;gap:24px;list-style:none}
-.nav-links a{font-size:14px;color:var(--c5);text-decoration:none;transition:color .2s;cursor:pointer}
-.nav-links a:hover{color:var(--c2)}
-.nav-cta{background:var(--c2);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:14px;font-family:var(--font);font-weight:600;cursor:pointer;transition:background .2s,transform .15s;box-shadow:0 2px 10px rgba(6,182,212,.28)}
-.nav-cta:hover{background:var(--c4);transform:translateY(-1px)}
-.l-hamburger{display:none;background:transparent;border:none;font-size:22px;cursor:pointer;color:var(--c5);padding:4px}
-.mobile-menu{display:none;position:fixed;inset:0;background:rgba(12,74,110,.96);z-index:200;flex-direction:column;align-items:center;justify-content:center;gap:2rem}
-.mobile-menu.open{display:flex}
-.mobile-menu a,.mobile-menu .mm-link{color:#fff;font-family:var(--font);font-size:1.2rem;font-weight:500;text-decoration:none;background:transparent;border:none;cursor:pointer}
-.mm-close{position:absolute;top:1.5rem;right:1.5rem;font-size:28px;background:transparent;border:none;color:#fff;cursor:pointer}
-.hero{background:linear-gradient(135deg,#0c4a6e 0%,#0369a1 40%,#0891b2 100%);padding:72px 2rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;min-height:440px}
-.hero-left{flex:1;max-width:540px}
-.hero-badge{display:inline-block;background:rgba(255,255,255,.15);color:#bae6fd;font-size:13px;padding:4px 14px;border-radius:20px;margin-bottom:16px}
-.hero h1{font-size:38px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:16px}
-.hero h1 span{color:var(--c3)}
-.hero p{color:#bae6fd;font-size:15px;line-height:1.7;margin-bottom:28px}
-.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
-.btn-primary{background:#fff;color:var(--c5);border:none;border-radius:8px;padding:12px 24px;font-size:15px;font-family:var(--font);font-weight:600;cursor:pointer;transition:transform .15s,box-shadow .2s}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.18)}
-.btn-secondary{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.45);border-radius:8px;padding:12px 24px;font-size:15px;font-family:var(--font);font-weight:500;cursor:pointer;transition:background .2s}
-.btn-secondary:hover{background:rgba(255,255,255,.1)}
-.hero-right{flex:1;max-width:380px}
-.hero-card{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:16px;padding:24px;backdrop-filter:blur(12px)}
-.hero-card h3{color:#fff;font-size:15px;font-weight:600;margin-bottom:16px}
-.fg{margin-bottom:12px}
-.fg label{display:block;color:#bae6fd;font-size:12px;margin-bottom:4px}
-.fg input,.fg select{width:100%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:10px 12px;color:#fff;font-size:14px;font-family:var(--font);outline:none;transition:border-color .2s}
-.fg input:focus,.fg select:focus{border-color:rgba(255,255,255,.6)}
-.fg input::placeholder{color:rgba(255,255,255,.4)}
-.fg select option{color:#000}
-.form-submit{width:100%;background:var(--c2);color:#fff;border:none;border-radius:8px;padding:12px;font-size:15px;font-family:var(--font);font-weight:600;cursor:pointer;margin-top:4px;transition:background .2s,transform .15s}
-.form-submit:hover{background:var(--c4);transform:translateY(-1px)}
-.stats{background:var(--c5);padding:32px 2rem;display:flex;justify-content:center}
-.stat-item{flex:1;max-width:200px;text-align:center;padding:0 1.5rem;border-right:1px solid rgba(255,255,255,.15)}
-.stat-item:last-child{border-right:none}
-.stat-num{font-size:30px;font-weight:700;color:var(--c3)}
-.stat-lbl{font-size:13px;color:#93c5fd;margin-top:4px}
-.services{padding:64px 2rem;background:#f0f9ff}
-.section-title{text-align:center;margin-bottom:40px}
-.section-title h2{font-size:28px;font-weight:700;color:var(--c5)}
-.section-title p{color:#64748b;font-size:15px;margin-top:8px}
-.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;max-width:980px;margin:0 auto}
-.service-card{background:#fff;border:1px solid #bae6fd;border-radius:12px;padding:24px 20px;text-align:center;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s}
-.service-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(6,182,212,.15);border-color:var(--c2)}
-.service-icon{width:52px;height:52px;background:var(--c-light);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
-.service-icon svg{width:26px;height:26px}
-.service-card h3{font-size:15px;font-weight:600;color:var(--c5);margin-bottom:8px}
-.service-card p{font-size:13px;color:#64748b;line-height:1.6}
-.service-price{display:inline-block;margin-top:12px;font-size:13px;color:var(--c4);font-weight:600}
-.service-btn{display:block;margin-top:14px;width:100%;background:transparent;border:1px solid var(--c2);border-radius:7px;padding:7px;font-size:13px;font-family:var(--font);color:var(--c4);cursor:pointer;transition:background .2s,color .2s}
-.service-btn:hover{background:var(--c2);color:#fff}
-.doctors{padding:64px 2rem;background:#fff}
-.doctors-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;max-width:980px;margin:0 auto}
-.doctor-card{border:1px solid #e0f2fe;border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s}
-.doctor-card:hover{transform:translateY(-4px);box-shadow:0 8px 28px rgba(6,182,212,.15)}
-.doctor-photo{height:180px;background:linear-gradient(160deg,#0891b2 0%,#0e7aad 100%);display:flex;align-items:center;justify-content:center}
-.doctor-avatar{width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#fff}
-.doctor-info{padding:16px}
-.doctor-info h3{font-size:15px;font-weight:600;color:var(--c5);margin-bottom:4px}
-.doctor-info span{font-size:13px;color:var(--c4)}
-.doctor-info p{font-size:13px;color:#64748b;margin-top:8px;line-height:1.5}
-.doctor-btn{display:block;margin:12px 16px 16px;background:var(--c2);border:none;border-radius:8px;padding:9px;font-size:13px;font-family:var(--font);font-weight:600;color:#fff;cursor:pointer;transition:background .2s;text-align:center;width:calc(100% - 32px)}
-.doctor-btn:hover{background:var(--c4)}
-.why{padding:64px 2rem;background:var(--c5)}
-.why .section-title h2{color:#fff}
-.why .section-title p{color:#93c5fd}
-.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;max-width:980px;margin:0 auto}
-.why-item{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:24px 20px}
-.why-num{font-size:32px;font-weight:700;color:var(--c3);margin-bottom:8px}
-.why-item h4{font-size:15px;font-weight:600;color:#fff;margin-bottom:8px}
-.why-item p{font-size:13px;color:#93c5fd;line-height:1.6}
-.reviews{padding:64px 2rem;background:#f0f9ff}
-.reviews-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;max-width:980px;margin:0 auto}
-.review-card{background:#fff;border:1px solid #bae6fd;border-radius:12px;padding:20px}
-.review-stars{color:var(--c2);font-size:16px;margin-bottom:10px}
-.review-text{font-size:14px;color:#475569;line-height:1.7;margin-bottom:14px}
-.review-author{display:flex;align-items:center;gap:10px}
-.review-ava{width:36px;height:36px;border-radius:50%;background:var(--c-light);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--c4)}
-.review-name{font-size:13px;font-weight:600;color:var(--c5)}
-.review-date{font-size:12px;color:#94a3b8}
-.cta-band{background:linear-gradient(135deg,#0891b2,#0e7aad);padding:64px 2rem;text-align:center}
-.cta-band h2{font-size:28px;font-weight:700;color:#fff;margin-bottom:12px}
-.cta-band p{color:#bae6fd;font-size:15px;margin-bottom:28px}
-.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.cta-phone{background:#fff;color:var(--c5);border:none;border-radius:8px;padding:13px 28px;font-size:15px;font-family:var(--font);font-weight:600;cursor:pointer;transition:transform .15s,box-shadow .2s}
-.cta-phone:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.2)}
-.cta-call{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.5);border-radius:8px;padding:13px 28px;font-size:15px;font-family:var(--font);font-weight:500;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;transition:background .2s}
-.cta-call:hover{background:rgba(255,255,255,.12)}
-.footer{background:#0c4a6e;padding:48px 2rem 24px}
-.footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:32px;max-width:980px;margin:0 auto 32px}
-.footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.footer-logo img{width:34px;height:34px;object-fit:contain;border-radius:7px}
-.footer-logo-name{font-size:16px;font-weight:600;color:#fff}
-.footer-logo-name span{color:var(--c2)}
-.footer-col h4{font-size:14px;font-weight:600;color:#bae6fd;margin-bottom:12px}
-.footer-col p,.footer-col a{font-size:13px;color:#7dd3fc;line-height:2.1;display:block;text-decoration:none;cursor:pointer}
-.footer-col a:hover{color:#fff}
-.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:20px;text-align:center;font-size:12px;color:#7dd3fc;max-width:980px;margin:0 auto}
-.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:#0c4a6e;color:#fff;padding:12px 24px;border-radius:10px;font-family:var(--font);font-size:14px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.3)}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(12,74,110,.7);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-.modal-overlay.open{display:flex}
-.modal{background:#fff;border-radius:16px;padding:32px;max-width:420px;width:90%;position:relative;animation:mUp .3s cubic-bezier(.16,1,.3,1)}
-@keyframes mUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.modal h3{font-size:20px;font-weight:700;color:var(--c5);margin-bottom:8px}
-.modal .modal-sub{font-size:14px;color:#64748b;margin-bottom:20px;line-height:1.6}
-.modal-close{position:absolute;top:14px;right:16px;background:transparent;border:none;font-size:22px;cursor:pointer;color:#94a3b8}
-.modal .fg label{color:#475569}
-.modal .fg input,.modal .fg select{background:#f8fafc;border:1px solid #e2e8f0;color:#1e293b}
-.modal .fg input:focus,.modal .fg select:focus{border-color:var(--c2);outline:none}
-.modal-or{text-align:center;margin:14px 0 0;font-size:13px;color:#94a3b8}
-.modal-or a{color:var(--c2);cursor:pointer;font-weight:600}
-@media(max-width:768px){
-  .nav-links{display:none}
-  .l-hamburger{display:block}
-  .hero{flex-direction:column;padding:48px 1.25rem;min-height:auto}
-  .hero-right{max-width:100%;width:100%}
-  .hero h1{font-size:26px}
-  .stats{flex-wrap:wrap;gap:16px;justify-content:center}
-  .stat-item{border-right:none;min-width:120px}
-  .services,.doctors,.why,.reviews,.cta-band{padding:48px 1.25rem}
-}
+#view-chat{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden}
 /* CHAT */
 #view-chat{font-family:'Sora',sans-serif}
 .chat-bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
@@ -153,31 +22,6 @@ body{font-family:var(--font);overflow-x:hidden}
 @keyframes drift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(28px,-18px) scale(1.07)}100%{transform:translate(-18px,28px) scale(.95)}}
 .cpage{position:relative;z-index:1;display:none;width:100%;height:100vh;height:100dvh}
 .cpage.active{display:flex}
-#auth-page{align-items:center;justify-content:center;padding:1rem}
-.card{width:100%;max-width:420px;background:rgba(255,255,255,.07);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,.13);border-radius:24px;padding:2.5rem 2rem;box-shadow:0 32px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1);animation:slideUp .5s cubic-bezier(.16,1,.3,1)}
-@keyframes slideUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
-.logo{width:80px;height:80px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem}
-.card h1{text-align:center;font-size:1.75rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.25rem}
-.card .sub{text-align:center;font-size:.8rem;margin-bottom:2rem}
-.field{position:relative;margin-bottom:1rem}
-.field input{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:.85rem 2.5rem .85rem 1rem;color:#fff;font-family:'Sora',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s,background .2s}
-.field input:focus{border-color:rgba(124,58,237,.7);background:rgba(255,255,255,.1)}
-.field .ico{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.3);font-size:15px;pointer-events:none}
-.row-between{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem;margin-top:.2rem}
-.remember{display:flex;align-items:center;gap:6px;font-size:.77rem;color:rgba(255,255,255,.4);cursor:pointer}
-.remember input{accent-color:#7c3aed;width:13px;height:13px}
-.forgot{font-size:.77rem;color:rgba(255,255,255,.4);cursor:pointer}
-.btn-main{width:100%;padding:.9rem;background:#fff;color:#0a0a1a;font-family:'Sora',sans-serif;font-size:.95rem;font-weight:600;border:none;border-radius:12px;cursor:pointer;transition:transform .15s,box-shadow .15s,opacity .15s;box-shadow:0 4px 20px rgba(255,255,255,.12)}
-.btn-main:hover:not(:disabled){transform:translateY(-1px)}
-.btn-main:disabled{opacity:.55;cursor:not-allowed}
-.err-box{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:.6rem .9rem;color:#fca5a5;font-size:.78rem;margin-bottom:1rem;text-align:center;display:none}
-.switch-line{text-align:center;margin-top:1.5rem;font-size:.8rem;color:rgba(255,255,255,.3)}
-.switch-line span{color:#a78bfa;font-weight:600;cursor:pointer;margin-left:4px}
-.spinner{display:inline-block;width:15px;height:15px;border:2px solid rgba(0,0,0,.2);border-top-color:#0a0a1a;border-radius:50%;animation:spin .7s linear infinite;margin-right:7px;vertical-align:middle}
-@keyframes spin{to{transform:rotate(360deg)}}
-#confirm-field{display:none}
-.back-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:6px 14px;color:rgba(255,255,255,.45);font-family:'Sora',sans-serif;font-size:.72rem;cursor:pointer;margin:1rem auto 0;transition:all .2s}
-.back-btn:hover{background:rgba(255,255,255,.14);color:#fff}
 #chat-page{flex-direction:row}
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10;backdrop-filter:blur(2px)}
 .sidebar-overlay.show{display:block}
@@ -204,10 +48,6 @@ body{font-family:var(--font);overflow-x:hidden}
 .lbtn.on,.lbtn:hover{background:var(--primary);border-color:var(--primary);color:#fff}
 .sb-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:.6rem .8rem;color:rgba(255,255,255,.45);font-family:'Sora',sans-serif;font-size:.75rem;text-align:left;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background .15s;width:100%}
 .sb-btn:hover{background:rgba(255,255,255,.09);color:#fff}
-.user-row{display:flex;align-items:center;justify-content:space-between;padding:.4rem;border-top:1px solid rgba(255,255,255,.07);margin-top:.2rem}
-.user-name{font-size:.75rem;color:rgba(255,255,255,.4);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px}
-.logout-btn{background:transparent;border:none;color:rgba(255,255,255,.28);font-family:'Sora',sans-serif;font-size:.7rem;cursor:pointer;transition:color .15s;flex-shrink:0}
-.logout-btn:hover{color:#f87171}
 .main{flex:1;display:flex;flex-direction:column;min-width:0}
 .chat-header{padding:.9rem 1.4rem;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:9px}
 .c-hamburger{display:none;background:transparent;border:none;color:rgba(255,255,255,.6);font-size:22px;cursor:pointer;padding:2px 4px;flex-shrink:0;line-height:1}
@@ -216,8 +56,6 @@ body{font-family:var(--font);overflow-x:hidden}
 .header-title{font-size:.92rem;font-weight:600}
 .header-right{margin-left:auto;display:flex;align-items:center;gap:10px}
 .header-sub{font-size:.68rem;color:rgba(255,255,255,.3)}
-.back-site-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:7px;padding:4px 10px;color:rgba(255,255,255,.45);font-family:'Sora',sans-serif;font-size:.68rem;cursor:pointer;transition:all .15s;flex-shrink:0}
-.back-site-btn:hover{background:rgba(255,255,255,.14);color:#fff}
 .clear-btn{background:transparent;border:none;color:rgba(255,255,255,.22);font-family:'Sora',sans-serif;font-size:.68rem;cursor:pointer;transition:color .15s}
 .clear-btn:hover{color:rgba(255,255,255,.55)}
 .messages{flex:1;overflow-y:auto;padding:1.4rem;display:flex;flex-direction:column;gap:.9rem;scroll-behavior:smooth}
@@ -244,10 +82,14 @@ body{font-family:var(--font);overflow-x:hidden}
 .send-btn{width:34px;height:34px;flex-shrink:0;background:var(--primary);border:none;border-radius:9px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:transform .15s,box-shadow .2s;box-shadow:0 2px 10px var(--glow)}
 .send-btn:hover:not(:disabled){transform:scale(1.07)}
 .send-btn:disabled{opacity:.35;cursor:not-allowed}
+.mic-btn{width:34px;height:34px;flex-shrink:0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:9px;color:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:transform .15s,background .2s}
+.mic-btn:hover:not(:disabled){transform:scale(1.07)}
+.mic-btn:disabled{opacity:.35;cursor:not-allowed}
+.mic-btn.rec{background:#ef4444;border-color:#ef4444;color:#fff;animation:micpulse 1.2s ease-in-out infinite}
+@keyframes micpulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5)}50%{box-shadow:0 0 0 7px rgba(239,68,68,0)}}
+.voice-toggle{background:transparent;border:none;cursor:pointer;font-size:15px;line-height:1;opacity:.4;padding:2px;transition:opacity .2s}
+.voice-toggle.on{opacity:1}
 @media(max-width:640px){
-  .card{padding:1.75rem 1.25rem;border-radius:20px}
-  .card h1{font-size:1.4rem}
-  .logo{width:64px;height:64px}
   .sidebar{position:fixed;left:0;top:0;height:100vh;transform:translateX(-100%);box-shadow:4px 0 32px rgba(0,0,0,.6);overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   .sidebar.open{transform:translateX(0)}
   .sidebar-close{display:block}
@@ -263,137 +105,10 @@ body{font-family:var(--font);overflow-x:hidden}
 </head>
 <body>
 
-<div id="view-landing" class="view active landing">
-  <nav class="nav">
-    <div class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})"><img src="logo1.png" alt="Doctor-K"/><div class="nav-logo-text">Doctor-K <span>Dental</span></div></div>
-    <ul class="nav-links">
-      <li><a onclick="goSec('services')">Услуги</a></li><li><a onclick="goSec('doctors')">Врачи</a></li>
-      <li><a onclick="goSec('why')">О клинике</a></li><li><a onclick="goSec('reviews')">Отзывы</a></li>
-      <li><a onclick="goSec('contacts')">Контакты</a></li>
-    </ul>
-    <button class="nav-cta" onclick="openBook('Хочу записаться на приём в Doctor-K Dental')">Записаться</button>
-    <button class="l-hamburger" onclick="document.getElementById('mobileMenu').classList.add('open')">☰</button>
-  </nav>
-  <div class="mobile-menu" id="mobileMenu">
-    <button class="mm-close" onclick="document.getElementById('mobileMenu').classList.remove('open')">✕</button>
-    <a onclick="closeMM();goSec('services')">Услуги</a><a onclick="closeMM();goSec('doctors')">Врачи</a>
-    <a onclick="closeMM();goSec('why')">О клинике</a><a onclick="closeMM();goSec('reviews')">Отзывы</a>
-    <a onclick="closeMM();goSec('contacts')">Контакты</a>
-    <button class="mm-link" onclick="closeMM();openBook('Хочу записаться')" style="background:var(--c2);border-radius:8px;padding:12px 28px;font-size:15px;font-weight:600;border:none;cursor:pointer;color:#fff;margin-top:8px">Записаться ↗</button>
-  </div>
-  <section class="hero" id="home">
-    <div class="hero-left">
-      <div class="hero-badge">★ Рейтинг 4.6 — более 1 000 довольных пациентов</div>
-      <h1>Ваша улыбка — <span>наша забота</span></h1>
-      <p>Современная стоматология Doctor-K Dental в Алматы. Лечение, протезирование, имплантация и эстетическая стоматология. Безболезненно, качественно, по доступным ценам.</p>
-      <div class="hero-btns">
-        <button class="btn-primary" onclick="openBook('Хочу записаться на консультацию в Doctor-K Dental')">Записаться на приём ↗</button>
-        <button class="btn-secondary" onclick="goSec('services')">Наши услуги</button>
-      </div>
-    </div>
-    <div class="hero-right">
-      <div class="hero-card">
-        <h3>Онлайн-запись на приём</h3>
-        <div class="fg"><label>Ваше имя</label><input type="text" id="h-name" placeholder="Иван Иванов"/></div>
-        <div class="fg"><label>Номер телефона</label><input type="text" id="h-phone" placeholder="+7 (___) ___-__-__" oninput="fmtPhone(this)"/></div>
-        <div class="fg"><label>Услуга</label><select id="h-svc"><option>Консультация (бесплатно)</option><option>Лечение кариеса</option><option>Имплантация</option><option>Отбеливание</option><option>Брекеты / Элайнеры</option><option>Протезирование</option><option>Детская стоматология</option></select></div>
-        <button class="form-submit" onclick="submitHero()">Отправить заявку</button>
-      </div>
-    </div>
-  </section>
-  <div class="stats">
-    <div class="stat-item"><div class="stat-num">6+</div><div class="stat-lbl">лет на рынке</div></div>
-    <div class="stat-item"><div class="stat-num">1 000+</div><div class="stat-lbl">довольных пациентов</div></div>
-    <div class="stat-item"><div class="stat-num">6</div><div class="stat-lbl">врачей-специалистов</div></div>
-    <div class="stat-item"><div class="stat-num">96%</div><div class="stat-lbl">положительных отзывов</div></div>
-  </div>
-  <section class="services" id="services">
-    <div class="section-title"><h2>Наши услуги</h2><p>Полный спектр стоматологических услуг в одной клинике</p></div>
-    <div class="services-grid">
-      <div class="service-card" onclick="openBook('Хочу узнать про лечение кариеса')"><div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="1.8"><path d="M12 2C9.2 2 7 4.2 7 7c0 1.8.9 3.4 2.2 4.4L8 22h8l-1.2-10.6C16.1 10.4 17 8.8 17 7c0-2.8-2.2-5-5-5z"/></svg></div><h3>Лечение кариеса</h3><p>Современные материалы и безболезненные методики лечения</p><span class="service-price">от 25 000 ₸</span><button class="service-btn">Записаться →</button></div>
-      <div class="service-card" onclick="openBook('Хочу записаться на отбеливание зубов')"><div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12s1.5 3 4 3 4-3 4-3"/><line x1="9" y1="9" x2="9.01" y2="9" stroke-linecap="round" stroke-width="2.5"/><line x1="15" y1="9" x2="15.01" y2="9" stroke-linecap="round" stroke-width="2.5"/></svg></div><h3>Отбеливание</h3><p>Профессиональное отбеливание до 8 тонов за 1 визит</p><span class="service-price">от 35 000 ₸</span><button class="service-btn">Записаться →</button></div>
-      <div class="service-card" onclick="openBook('Хочу узнать про имплантацию и цены')"><div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="1.8"><rect x="3" y="8" width="18" height="12" rx="3"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/></svg></div><h3>Имплантация</h3><p>Дентальные импланты ведущих мировых производителей</p><span class="service-price">от 180 000 ₸</span><button class="service-btn">Подробнее →</button></div>
-      <div class="service-card" onclick="openBook('Хочу узнать про брекеты и элайнеры')"><div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="1.8"><path d="M3 6h18M3 12h18M3 18h18"/></svg></div><h3>Ортодонтия</h3><p>Брекеты и элайнеры для идеального прикуса</p><span class="service-price">от 100 000 ₸</span><button class="service-btn">Подробнее →</button></div>
-      <div class="service-card" onclick="openBook('Расскажи про протезирование зубов')"><div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="1.8"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg></div><h3>Протезирование</h3><p>Коронки, виниры и съёмные протезы на любой бюджет</p><span class="service-price">от 50 000 ₸</span><button class="service-btn">Подробнее →</button></div>
-      <div class="service-card" onclick="openBook('Хочу записать ребёнка к детскому стоматологу')"><div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h3>Детская стоматология</h3><p>Мягкий подход и современные методы для малышей</p><span class="service-price">от 15 000 ₸</span><button class="service-btn">Записаться →</button></div>
-    </div>
-  </section>
-  <section class="doctors" id="doctors">
-    <div class="section-title"><h2>Наши специалисты</h2><p>Опытные врачи с многолетней практикой и международными сертификатами</p></div>
-    <div class="doctors-grid">
-      <div class="doctor-card"><div class="doctor-photo"><div class="doctor-avatar">АК</div></div><div class="doctor-info"><h3>Аскар Кожаканов</h3><span>Главный врач, имплантолог</span><p>Стаж 30+ лет. Сертифицирован по имплантации Nobel Biocare</p></div><button class="doctor-btn" onclick="openBook('Хочу записаться к Аскару Кожаканову')">Записаться к врачу</button></div>
-      <div class="doctor-card"><div class="doctor-photo"><div class="doctor-avatar">КМ</div></div><div class="doctor-info"><h3>Касен Маржан</h3><span>Терапевт</span><p>Стаж 5+ лет. Специализация — лечение кариеса и пародонта</p></div><button class="doctor-btn" onclick="openBook('Хочу записаться к терапевту Касену Маржану')">Записаться к врачу</button></div>
-      <div class="doctor-card"><div class="doctor-photo"><div class="doctor-avatar">НС</div></div><div class="doctor-info"><h3>Нурлан Сейткали</h3><span>Терапевт, эстетика</span><p>Стаж 10 лет. Эксперт в эстетической реставрации</p></div><button class="doctor-btn" onclick="openBook('Хочу записаться к Нурлану Сейткали')">Записаться к врачу</button></div>
-      <div class="doctor-card"><div class="doctor-photo"><div class="doctor-avatar">МА</div></div><div class="doctor-info"><h3>Малика Ахметова</h3><span>Ортодонт</span><p>Стаж 9 лет. Специализация — элайнеры и брекеты Invisalign</p></div><button class="doctor-btn" onclick="openBook('Хочу записаться к Малике Ахметовой')">Записаться к врачу</button></div>
-    </div>
-  </section>
-  <section class="why" id="why">
-    <div class="section-title"><h2>Почему выбирают нас</h2><p>Мы создаём комфорт на каждом этапе лечения</p></div>
-    <div class="why-grid">
-      <div class="why-item"><div class="why-num">01</div><h4>Безболезненное лечение</h4><p>Используем современные анестетики и щадящие методики. Боль — в прошлом.</p></div>
-      <div class="why-item"><div class="why-num">02</div><h4>Новейшее оборудование</h4><p>Цифровой рентген, 3D-томограф, CAD/CAM технологии изготовления коронок.</p></div>
-      <div class="why-item"><div class="why-num">03</div><h4>Прозрачные цены</h4><p>Чёткие прайс-листы без скрытых платежей. Рассрочка 0% до 12 месяцев.</p></div>
-      <div class="why-item"><div class="why-num">04</div><h4>Гарантия на работы</h4><p>Даём гарантию на все виды работ — от 1 года на пломбы до 5 лет на импланты.</p></div>
-    </div>
-  </section>
-  <section class="reviews" id="reviews">
-    <div class="section-title"><h2>Отзывы пациентов</h2><p>Что говорят те, кто уже доверился нам</p></div>
-    <div class="reviews-grid">
-      <div class="review-card"><div class="review-stars">★★★★★</div><p class="review-text">Удаляла зуб у доктора Маржан. Всё прошло быстро, аккуратно и абсолютно безболезненно. Очень внимательный и профессиональный врач, всё объяснила и поддержала. Спасибо большое, рекомендую!</p><div class="review-author"><div class="review-ava">ЗА</div><div><div class="review-name">Зарина А.</div><div class="review-date">март 2025</div></div></div></div>
-      <div class="review-card"><div class="review-stars">★★★★★</div><p class="review-text">Привёл ребёнка на лечение — боялся, что будет плакать. Вообще не больно просто страшно!</p><div class="review-author"><div class="review-ava">АС</div><div><div class="review-name">Асхат С.</div><div class="review-date">февраль 2025</div></div></div></div>
-      <div class="review-card"><div class="review-stars">★★★★★</div><p class="review-text">Бүгін Асқар Хасенұлы екі тісімді ауыртпай, әдемі етіп жасап берді, енді барлық тісімді тек осы клиникада осы дәрігерде емдеймін деп шештім</p><div class="review-author"><div class="review-ava">МК</div><div><div class="review-name">Мадина К.</div><div class="review-date">январь 2025</div></div></div></div>
-    </div>
-  </section>
-  <section class="cta-band">
-    <h2>Первая консультация — скидка 20%</h2>
-    <p>Запишитесь сейчас и получите осмотр и план лечения с точной стоимостью за 5000 ₸</p>
-    <div class="cta-btns">
-      <button class="cta-phone" onclick="openBook('Хочу записаться на бесплатную консультацию')">Записаться онлайн ↗</button>
-      <a class="cta-call" href="tel:+77078514106">📞 +7 (707) 851-41-06</a>
-    </div>
-  </section>
-  <footer class="footer" id="contacts">
-    <div class="footer-grid">
-      <div class="footer-col"><div class="footer-logo"><img src="logo1.png" alt="logo"/><div class="footer-logo-name">Doctor-K <span>Dental</span></div></div><p>Современная стоматология в сердце Алматы. Ваша улыбка — наш приоритет.</p></div>
-      <div class="footer-col"><h4>Услуги</h4><a onclick="openBook('Расскажи про лечение кариеса')">Лечение кариеса</a><a onclick="openBook('Расскажи про имплантацию')">Имплантация</a><a onclick="openBook('Расскажи про ортодонтию')">Ортодонтия</a><a onclick="openBook('Расскажи про протезирование')">Протезирование</a><a onclick="openBook('Расскажи про детскую стоматологию')">Детская стоматология</a></div>
-      <div class="footer-col"><h4>Контакты</h4><p>📍 г. Алматы, мкр. Мамыр-1, 29/5</p><a href="tel:+77078514106">📞 +7 (707) 851-41-06</a><a href="mailto:info@doctor-k.kz">✉️ info@doctor-k.kz</a><p>🕐 Пн–Сб: 8:00 – 19:00</p></div>
-      <div class="footer-col"><h4>Навигация</h4><a onclick="goSec('why')">О клинике</a><a onclick="goSec('doctors')">Наши врачи</a><a onclick="goSec('services')">Услуги и цены</a><a onclick="goSec('reviews')">Отзывы</a><a onclick="openBook('Хочу записаться онлайн')">Запись онлайн</a></div>
-    </div>
-    <div class="footer-bottom">© 2025 Doctor-K Dental. Все права защищены.</div>
-  </footer>
-  <div class="modal-overlay" id="bookModal">
-    <div class="modal">
-      <button class="modal-close" onclick="closeBook()">✕</button>
-      <h3>Записаться на приём</h3>
-      <p class="modal-sub">Оставьте заявку — мы перезвоним в течение 15 минут</p>
-      <div class="fg"><label>Ваше имя</label><input type="text" id="m-name" placeholder="Иван Иванов"/></div>
-      <div class="fg"><label>Номер телефона</label><input type="text" id="m-phone" placeholder="+7 (___) ___-__-__" oninput="fmtPhone(this)"/></div>
-      <div class="fg"><label>Услуга</label><select id="m-svc"><option>Консультация (бесплатно)</option><option>Лечение кариеса</option><option>Имплантация</option><option>Отбеливание</option><option>Брекеты / Элайнеры</option><option>Протезирование</option><option>Детская стоматология</option></select></div>
-      <button class="form-submit" onclick="submitModal()">Отправить заявку</button>
-      <div class="modal-or">или <a onclick="goToChat()">задать вопрос AI-ассистенту ↗</a></div>
-    </div>
-  </div>
-</div>
-
 <!-- CHAT VIEW -->
-<div id="view-chat" class="view">
+<div id="view-chat">
   <div class="chat-bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
-  <div class="cpage active" id="auth-page">
-    <div class="card">
-      <div class="logo"><img src="logo.png" style="width:140px;height:140px;object-fit:contain;border-radius:30px;"/></div>
-      <h1 id="auth-title">Войти</h1>
-      <p class="sub">Doctor-K Dental · AI Ассистент</p>
-      <div class="err-box" id="err-box"></div>
-      <div class="field"><input id="inp-email" type="email" placeholder="Email" autocomplete="email"/><span class="ico">📧</span></div>
-      <div class="field"><input id="inp-pass" type="password" placeholder="Пароль" autocomplete="current-password"/><span class="ico">🔒</span></div>
-      <div class="field" id="confirm-field"><input id="inp-confirm" type="password" placeholder="Подтвердите пароль"/><span class="ico">🔒</span></div>
-      <div class="row-between" id="remember-row"><label class="remember"><input type="checkbox"/> Запомнить меня</label><span class="forgot">Забыли пароль?</span></div>
-      <button class="btn-main" id="auth-btn" onclick="submitAuth()">Войти</button>
-      <p class="switch-line" id="switch-line">Нет аккаунта? <span onclick="toggleMode()">Зарегистрироваться</span></p>
-      <button class="back-btn" onclick="showLanding()">← Вернуться на сайт</button>
-    </div>
-  </div>
-  <div class="cpage" id="chat-page">
+  <div class="cpage active" id="chat-page">
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSB()"></div>
     <div class="sidebar" id="sidebar">
       <div class="brand">
@@ -410,8 +125,6 @@ body{font-family:var(--font);overflow-x:hidden}
       </div>
       <button class="sb-btn" onclick="toggleSettings()">⚙️ <span id="sb-settings">Настройки</span></button>
       <button class="sb-btn" onclick="clearChat()">🗑️ <span id="sb-clear">Очистить чат</span></button>
-      <button class="sb-btn" onclick="showLanding()">🏠 Вернуться на сайт</button>
-      <div class="user-row"><span class="user-name" id="user-display">👤 user</span><button class="logout-btn" onclick="logout()" id="sb-logout">Выйти</button></div>
     </div>
     <div class="main">
       <div class="chat-header">
@@ -419,142 +132,62 @@ body{font-family:var(--font);overflow-x:hidden}
         <div class="dot"></div>
         <span class="header-title">VoiceGuard AI</span>
         <div class="header-right">
-          <span class="header-sub">Онлайн · Готов помочь</span>
-          <button class="back-site-btn" onclick="showLanding()">← Сайт</button>
+          <span class="header-sub" id="header-sub">Онлайн · Готов помочь</span>
+          <button class="voice-toggle" id="voice-toggle" onclick="toggleVoice()" title="Озвучивать ответы">🔈</button>
           <button class="clear-btn" onclick="clearChat()" id="hdr-clear">Очистить</button>
         </div>
       </div>
       <div class="messages" id="messages"></div>
-      <div class="input-area"><div class="input-row"><textarea id="msg-input" rows="1" placeholder="Задайте вопрос..."></textarea><button class="send-btn" id="send-btn" onclick="sendMsg()" title="Отправить">➤</button></div></div>
+      <div class="input-area"><div class="input-row"><textarea id="msg-input" rows="1" placeholder="Задайте вопрос..."></textarea><button class="mic-btn" id="mic-btn" onclick="toggleMic()" title="Голосовой ввод">🎤</button><button class="send-btn" id="send-btn" onclick="sendMsg()" title="Отправить">➤</button></div></div>
     </div>
   </div>
 </div>
-<div class="toast" id="toast"></div>
 
 <script>
-/*
-   supabase.com → твой проект → Settings → API
-*/
-const SUPABASE_URL = 'https://fbaorfoolvusvggviaus.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZiYW9yZm9vbHZ1c3ZnZ3ZpYXVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MTczMDIsImV4cCI6MjA5MjE5MzMwMn0.9trltzvWQNPEp6OD0MklI7MynePQHKZryBw1vInUHo8';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let pendingMsg='';
-function showLanding(){document.getElementById('view-landing').classList.add('active');document.getElementById('view-chat').classList.remove('active');document.body.style.overflow='';}
-function showChatView(msg){
-  if(!localStorage.getItem('vg_theme')) {
-  localStorage.setItem('vg_theme', 'grey');
-  }
-  pendingMsg=msg||'';
-  document.getElementById('view-landing').classList.remove('active');
-  document.getElementById('view-chat').classList.add('active');
-  document.body.style.overflow='hidden';
-  if(currentUser){document.getElementById('auth-page').classList.remove('active');document.getElementById('chat-page').classList.add('active');if(pendingMsg){setTimeout(()=>{sendMsg(pendingMsg);pendingMsg='';},350);}}
-  else{document.getElementById('auth-page').classList.add('active');document.getElementById('chat-page').classList.remove('active');}
-  const saved = localStorage.getItem('vg_theme');
-  const validThemes = ['grey', 'blue', 'white'];
-  applyTheme(validThemes.includes(saved) ? saved : 'grey');
-}
-function goSec(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth'});}
-function closeMM(){document.getElementById('mobileMenu').classList.remove('open');}
-function openBook(msg){pendingMsg=msg||'';document.getElementById('bookModal').classList.add('open');}
-function closeBook(){document.getElementById('bookModal').classList.remove('open');}
-document.getElementById('bookModal').addEventListener('click',function(e){if(e.target===this)closeBook();});
-function goToChat(){closeBook();showChatView(pendingMsg);}
-function fmtPhone(input){let v=input.value.replace(/\D/g,'');if(v.startsWith('8'))v='7'+v.slice(1);if(v.startsWith('7')&&v.length>1)v='+7 ('+v.slice(1,4)+(v.length>4?') '+v.slice(4,7):'')+(v.length>7?'-'+v.slice(7,9):'')+(v.length>9?'-'+v.slice(9,11):'');else if(v.length>0)v='+'+v;input.value=v;}
-function submitHero(){const n=document.getElementById('h-name').value.trim();const p=document.getElementById('h-phone').value.trim();if(!n){showToast('Введите ваше имя');return;}if(!p||p.replace(/\D/g,'').length<10){showToast('Введите корректный номер');return;}showToast('✅ Заявка отправлена! Перезвоним в ближайшее время');document.getElementById('h-name').value='';document.getElementById('h-phone').value='';setTimeout(()=>showChatView('Я оставил заявку на сайте Doctor-K Dental. Что дальше?'),1800);}
-function submitModal(){const n=document.getElementById('m-name').value.trim();const p=document.getElementById('m-phone').value.trim();if(!n){showToast('Введите ваше имя');return;}if(!p||p.replace(/\D/g,'').length<10){showToast('Введите корректный номер');return;}closeBook();showToast('✅ Заявка принята! Ожидайте звонка в течение 15 минут');setTimeout(()=>showChatView('Я записался на приём в Doctor-K Dental. Что мне ожидать?'),1800);}
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
-
+const STORE_KEY='vg_messages';
 const THEMES={
   grey:{primary:'#6b7280',accent:'#9ca3af',glow:'rgba(107,114,128,.28)',bodyBg:'#1f2124',sidebarBg:'rgba(15,16,18,.95)',sidebarBorder:'rgba(255,255,255,.07)',mainBg:'#1f2124',headerBg:'rgba(15,16,18,.7)',headerBorder:'rgba(255,255,255,.07)',inputAreaBg:'rgba(15,16,18,.5)',inputRowBg:'rgba(255,255,255,.05)',inputRowBorder:'rgba(255,255,255,.08)',bubbleBotBg:'rgba(255,255,255,.07)',bubbleBotBorder:'rgba(255,255,255,.09)',bubbleBotColor:'rgba(255,255,255,.9)',textColor:'#fff',textMuted:'rgba(255,255,255,.35)',cardBg:'rgba(255,255,255,.07)',cardBorder:'rgba(255,255,255,.13)',settingsBg:'rgba(255,255,255,.05)',settingsBorder:'rgba(255,255,255,.09)',presetBg:'rgba(255,255,255,.05)',presetBorder:'rgba(255,255,255,.07)',presetColor:'rgba(255,255,255,.6)',sbBtnBg:'rgba(255,255,255,.05)',sbBtnBorder:'rgba(255,255,255,.07)',blobs:['#4b5563','#374151','#6b7280','#9ca3af'],inputTextColor:'#fff',ph:'rgba(255,255,255,.22)',mobileSB:'rgba(10,11,13,.97)',dark:true},
   blue:{primary:'#2563eb',accent:'#60a5fa',glow:'rgba(37,99,235,.32)',bodyBg:'#05080f',sidebarBg:'rgba(3,5,15,.95)',sidebarBorder:'rgba(255,255,255,.07)',mainBg:'#05080f',headerBg:'rgba(3,5,15,.7)',headerBorder:'rgba(255,255,255,.07)',inputAreaBg:'rgba(3,5,15,.5)',inputRowBg:'rgba(255,255,255,.06)',inputRowBorder:'rgba(255,255,255,.09)',bubbleBotBg:'rgba(255,255,255,.07)',bubbleBotBorder:'rgba(255,255,255,.08)',bubbleBotColor:'rgba(255,255,255,.9)',textColor:'#fff',textMuted:'rgba(255,255,255,.35)',cardBg:'rgba(255,255,255,.07)',cardBorder:'rgba(255,255,255,.13)',settingsBg:'rgba(255,255,255,.05)',settingsBorder:'rgba(255,255,255,.09)',presetBg:'rgba(255,255,255,.05)',presetBorder:'rgba(255,255,255,.07)',presetColor:'rgba(255,255,255,.6)',sbBtnBg:'rgba(255,255,255,.05)',sbBtnBorder:'rgba(255,255,255,.07)',blobs:['#1d4ed8','#1e40af','#3b82f6','#06b6d4'],inputTextColor:'#fff',ph:'rgba(255,255,255,.22)',mobileSB:'rgba(2,4,12,.97)',dark:true},
   white:{primary:'#2563eb',accent:'#3b82f6',glow:'rgba(37,99,235,.22)',bodyBg:'#f0f2f5',sidebarBg:'rgba(255,255,255,.97)',sidebarBorder:'rgba(0,0,0,.08)',mainBg:'#f0f2f5',headerBg:'rgba(255,255,255,.92)',headerBorder:'rgba(0,0,0,.07)',inputAreaBg:'rgba(255,255,255,.8)',inputRowBg:'rgba(0,0,0,.04)',inputRowBorder:'rgba(0,0,0,.1)',bubbleBotBg:'#fff',bubbleBotBorder:'rgba(0,0,0,.08)',bubbleBotColor:'#1a1a2e',textColor:'#1a1a2e',textMuted:'rgba(0,0,0,.45)',cardBg:'rgba(255,255,255,.92)',cardBorder:'rgba(0,0,0,.1)',settingsBg:'rgba(0,0,0,.03)',settingsBorder:'rgba(0,0,0,.08)',presetBg:'rgba(0,0,0,.03)',presetBorder:'rgba(0,0,0,.08)',presetColor:'rgba(0,0,0,.55)',sbBtnBg:'rgba(0,0,0,.03)',sbBtnBorder:'rgba(0,0,0,.07)',blobs:['#bfdbfe','#ddd6fe','#e0f2fe','#fce7f3'],inputTextColor:'#1a1a2e',ph:'rgba(0,0,0,.3)',mobileSB:'rgba(240,242,245,.99)',dark:false},
 };
 const LANGS={
-  ru:{ph:'Задайте вопрос...',welcome:'Здравствуйте! Я AI-ассистент Doctor-K Dental. Помогу записаться на приём, расскажу об услугах и ценах. Чем могу помочь?',presets:['Хочу записаться на приём','Расскажи об услугах','Какие цены на имплантацию?','Как проходит первый визит?'],settings:'Настройки',clear:'Очистить',logout:'Выйти'},
-  en:{ph:'Ask me anything...',welcome:"Hello! I'm Doctor-K Dental AI assistant. I can help you book an appointment and answer questions. How can I help?",presets:['Book an appointment','About services','Implant pricing?','What to expect?'],settings:'Settings',clear:'Clear chat',logout:'Logout'},
-  kz:{ph:'Сұрақ қойыңыз...',welcome:'Сәлем! Мен Doctor-K Dental AI-ассистентімін. Жазылуға көмектесемін. Қалай көмектесе аламын?',presets:['Жазылғым келеді','Қызметтер туралы айт','Имплантация бағасы?','Бірінші келу қалай?'],settings:'Баптаулар',clear:'Тазалау',logout:'Шығу'},
+  ru:{ph:'Задайте вопрос...',welcome:'Здравствуйте! Я VoiceGuard AI — ваш виртуальный оператор. Помогу ответить на вопросы об услугах и ценах, оставить заявку. Чем могу помочь?',presets:['Расскажите о ваших услугах','Какие у вас цены?','Хочу оставить заявку','Как с вами связаться?'],settings:'Настройки',clear:'Очистить'},
+  en:{ph:'Ask me anything...',welcome:"Hello! I'm VoiceGuard AI, your virtual operator. I can answer questions about services and prices, and take your request. How can I help?",presets:['Tell me about your services','What are your prices?','I want to leave a request','How can I contact you?'],settings:'Settings',clear:'Clear chat'},
+  kz:{ph:'Сұрақ қойыңыз...',welcome:'Сәлем! Мен VoiceGuard AI — виртуалды операторыңыз. Қызметтер мен бағалар туралы сұрақтарға жауап беремін, өтінім қалдыруға көмектесемін. Қалай көмектесе аламын?',presets:['Қызметтеріңіз туралы айтыңыз','Бағаларыңыз қандай?','Өтінім қалдырғым келеді','Сізбен қалай байланысуға болады?'],settings:'Баптаулар',clear:'Тазалау'},
 };
 
-let cMode='login',cLang='ru',theme='grey',msgs=[],loading=false,currentUser='',currentUserId='';
+const STATES={
+  ru:{ready:'Онлайн · Готов помочь',listen:'Слушаю...',proc:'Распознаю...',speak:'Говорю...',nomic:'Нет доступа к микрофону',empty:'Не расслышал, попробуйте ещё раз'},
+  en:{ready:'Online · Ready to help',listen:'Listening...',proc:'Transcribing...',speak:'Speaking...',nomic:'No microphone access',empty:"Didn't catch that, try again"},
+  kz:{ready:'Онлайн · Көмекке дайын',listen:'Тыңдап тұрмын...',proc:'Танып жатырмын...',speak:'Айтып жатырмын...',nomic:'Микрофонға рұқсат жоқ',empty:'Естімедім, қайталаңыз'},
+};
+const SR_LANG={ru:'ru-RU',en:'en-US',kz:'kk-KZ'};
 
-/* AUTH */
-function toggleMode(){
-  cMode=cMode==='login'?'register':'login';const r=cMode==='register';
-  document.getElementById('auth-title').textContent=r?'Регистрация':'Войти';
-  document.getElementById('confirm-field').style.display=r?'block':'none';
-  document.getElementById('remember-row').style.display=r?'none':'flex';
-  document.getElementById('auth-btn').textContent=r?'Создать аккаунт':'Войти';
-  document.getElementById('switch-line').innerHTML=r?"Уже есть аккаунт? <span onclick='toggleMode()'>Войти</span>":"Нет аккаунта? <span onclick='toggleMode()'>Зарегистрироваться</span>";
-  showErr('');
-}
-function showErr(m){const b=document.getElementById('err-box');b.textContent=m;b.style.display=m?'block':'none';}
+let cLang='ru',theme='grey',msgs=[],loading=false;
+let voiceOn=localStorage.getItem('vg_voice')==='1';
+let mediaRecorder=null,audioChunks=[],recording=false;
+const currentUser='Вы';
 
-async function submitAuth(){
-  const email=document.getElementById('inp-email').value.trim();
-  const pass=document.getElementById('inp-pass').value;
-  if(!email||!pass){showErr('Заполните все поля');return;}
-  const btn=document.getElementById('auth-btn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Подождите...';
+/* LOCAL STORAGE */
+function saveMsgs(){try{localStorage.setItem(STORE_KEY,JSON.stringify(msgs));}catch(e){}}
+function loadMsgs(){
   try{
-    if(cMode==='register'){
-      const c2=document.getElementById('inp-confirm').value;
-      if(pass!==c2){showErr('Пароли не совпадают');btn.disabled=false;btn.textContent='Создать аккаунт';return;}
-      if(pass.length<6){showErr('Пароль минимум 6 символов');btn.disabled=false;btn.textContent='Создать аккаунт';return;}
-      const {data,error}=await sb.auth.signUp({email,password:pass});
-      if(error){showErr(error.message);btn.disabled=false;btn.textContent='Создать аккаунт';return;}
-      currentUser=email.split('@')[0];currentUserId=data.user.id;
-      msgs=[{role:'assistant',text:LANGS[cLang].welcome,id:Date.now()}];
-      goChatPanel();
-    }else{
-      const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
-      if(error){showErr('Неверный email или пароль');btn.disabled=false;btn.textContent='Войти';return;}
-      currentUser=email.split('@')[0];currentUserId=data.user.id;
-      await loadHistory();
-      goChatPanel();
-    }
-  }catch(e){showErr('Ошибка. Попробуйте снова.');btn.disabled=false;btn.textContent=cMode==='login'?'Войти':'Создать аккаунт';}
-}
-
-async function logout(){
-  await sb.auth.signOut();
-  currentUser='';currentUserId='';msgs=[];closeSB();
-  document.getElementById('chat-page').classList.remove('active');
-  document.getElementById('auth-page').classList.add('active');
-  document.getElementById('inp-email').value='';document.getElementById('inp-pass').value='';
-  const btn=document.getElementById('auth-btn');btn.disabled=false;btn.textContent='Войти';
-  if(cMode!=='login')toggleMode();
-}
-
-/* SUPABASE MESSAGES */
-async function saveMsg(role,text){
-  if(!currentUserId)return;
-  await sb.from('messages').insert({user_id:currentUserId,role,content:text});
-}
-async function loadHistory(){
-  const {data}=await sb.from('messages').select('*').eq('user_id',currentUserId).order('created_at',{ascending:true}).limit(50);
-  if(data&&data.length>0){msgs=data.map(m=>({role:m.role,text:m.content,id:m.id}));}
-  else{msgs=[{role:'assistant',text:LANGS[cLang].welcome,id:Date.now()}];}
-}
-async function clearChat(){
-  if(currentUserId)await sb.from('messages').delete().eq('user_id',currentUserId);
+    const raw=localStorage.getItem(STORE_KEY);
+    if(raw){const arr=JSON.parse(raw);if(Array.isArray(arr)&&arr.length){msgs=arr;return;}}
+  }catch(e){}
   msgs=[{role:'assistant',text:LANGS[cLang].welcome,id:Date.now()}];
-  renderMsgs();closeSB();
+}
+function clearChat(){
+  msgs=[{role:'assistant',text:LANGS[cLang].welcome,id:Date.now()}];
+  saveMsgs();renderMsgs();closeSB();
 }
 
-/* CHAT */
-function goChatPanel(){
-  document.getElementById('auth-page').classList.remove('active');
-  document.getElementById('chat-page').classList.add('active');
-  document.getElementById('user-display').textContent='👤 '+currentUser;
-  renderMsgs();applyTheme(theme);
-  if(pendingMsg){setTimeout(()=>{sendMsg(pendingMsg);pendingMsg='';},400);}
-}
+/* CHAT UI */
 function openSB(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.add('show');}
 function closeSB(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('show');}
 function toggleSettings(){const p=document.getElementById('settings-panel');p.style.display=p.style.display==='none'?'flex':'none';p.style.flexDirection='column';}
-function setLang(l,btn){cLang=l;document.querySelectorAll('.lbtn').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');buildPresets();updateLabels();if(msgs.length>0&&msgs[0].role==='assistant'){msgs[0].text=LANGS[l].welcome;renderMsgs();}}
-function updateLabels(){const L=LANGS[cLang];const ta=document.getElementById('msg-input');if(ta)ta.placeholder=L.ph;const ss=document.getElementById('sb-settings');if(ss)ss.textContent=L.settings;const sc=document.getElementById('sb-clear');if(sc)sc.textContent=L.clear;const sl=document.getElementById('sb-logout');if(sl)sl.textContent=L.logout;const hc=document.getElementById('hdr-clear');if(hc)hc.textContent=L.clear;}
+function setLang(l,btn){cLang=l;document.querySelectorAll('.lbtn').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');buildPresets();updateLabels();if(msgs.length>0&&msgs[0].role==='assistant'){msgs[0].text=LANGS[l].welcome;saveMsgs();renderMsgs();}if(!recording&&!loading)setState('ready');}
+function updateLabels(){const L=LANGS[cLang];const ta=document.getElementById('msg-input');if(ta)ta.placeholder=L.ph;const ss=document.getElementById('sb-settings');if(ss)ss.textContent=L.settings;const sc=document.getElementById('sb-clear');if(sc)sc.textContent=L.clear;const hc=document.getElementById('hdr-clear');if(hc)hc.textContent=L.clear;}
 function buildPresets(){const w=document.getElementById('presets');if(!w)return;w.innerHTML='';LANGS[cLang].presets.forEach(q=>{const b=document.createElement('button');b.className='preset';b.textContent=q;b.onclick=()=>{sendMsg(q);closeSB();};w.appendChild(b);});}
 
 function renderMsgs(){
@@ -583,42 +216,96 @@ function showTyping(){
 }
 function removeTyping(){const e=document.getElementById('typing-row');if(e)e.remove();}
 
-async function sendMsg(preset){
+async function sendMsg(preset,viaVoice){
   const ta=document.getElementById('msg-input');const text=preset||ta.value.trim();
   if(!text||loading)return;ta.value='';ta.style.height='auto';
-  msgs.push({role:'user',text,id:Date.now()});renderMsgs();loading=true;
+  stopSpeaking();
+  msgs.push({role:'user',text,id:Date.now()});renderMsgs();saveMsgs();loading=true;
   document.getElementById('send-btn').disabled=true;showTyping();
-  await saveMsg('user',text);
+  let reply='';
   try{
     const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,history:msgs.slice(-10),lang:cLang})});
     const data=await res.json();
-    const reply=data.reply||'Извините, попробуйте снова.';
-    removeTyping();msgs.push({role:'assistant',text:reply,id:Date.now()+1});
-    await saveMsg('assistant',reply);
-  }catch(e){removeTyping();msgs.push({role:'assistant',text:'Ошибка соединения. Попробуйте снова.',id:Date.now()+1});}
+    reply=data.reply||'Извините, попробуйте снова.';
+    removeTyping();msgs.push({role:'assistant',text:reply,id:Date.now()+1});saveMsgs();
+  }catch(e){removeTyping();reply='';msgs.push({role:'assistant',text:'Ошибка соединения. Попробуйте снова.',id:Date.now()+1});saveMsgs();}
   renderMsgs();loading=false;document.getElementById('send-btn').disabled=false;ta.focus();
+  if(reply&&(voiceOn||viaVoice))speak(reply);
 }
+
+/* VOICE: запись -> STT -> чат */
+function setState(key){const el=document.getElementById('header-sub');if(el)el.textContent=(STATES[cLang]||STATES.en)[key]||'';}
+function setMicRec(on){const b=document.getElementById('mic-btn');if(b)b.classList.toggle('rec',on);}
+
+async function toggleMic(){
+  if(recording){stopRec();return;}
+  if(loading)return;
+  if(!navigator.mediaDevices||!window.MediaRecorder){alert((STATES[cLang]||STATES.en).nomic);return;}
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    stopSpeaking();
+    mediaRecorder=new MediaRecorder(stream);audioChunks=[];
+    mediaRecorder.ondataavailable=e=>{if(e.data&&e.data.size>0)audioChunks.push(e.data);};
+    mediaRecorder.onstop=async()=>{
+      stream.getTracks().forEach(t=>t.stop());
+      const blob=new Blob(audioChunks,{type:mediaRecorder.mimeType||'audio/webm'});
+      await transcribeAndSend(blob);
+    };
+    mediaRecorder.start();recording=true;setMicRec(true);setState('listen');
+  }catch(e){setState('ready');alert((STATES[cLang]||STATES.en).nomic);}
+}
+function stopRec(){if(mediaRecorder&&recording){recording=false;setMicRec(false);try{mediaRecorder.stop();}catch(e){}}}
+
+function blobToBase64(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onloadend=()=>resolve(String(r.result).split(',')[1]||'');r.onerror=reject;r.readAsDataURL(blob);});}
+
+async function transcribeAndSend(blob){
+  setState('proc');document.getElementById('mic-btn').disabled=true;
+  try{
+    const b64=await blobToBase64(blob);
+    const res=await fetch('/api/transcribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({audio:b64,mime:blob.type||'audio/webm',lang:cLang})});
+    const data=await res.json();
+    const text=(data.text||'').trim();
+    document.getElementById('mic-btn').disabled=false;setState('ready');
+    if(text)sendMsg(text,true);
+    else{setState('empty');setTimeout(()=>{if(!recording&&!loading)setState('ready');},2200);}
+  }catch(e){document.getElementById('mic-btn').disabled=false;setState('ready');}
+}
+
+/* VOICE: озвучка ответов (TTS) */
+function speak(text){
+  if(!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=SR_LANG[cLang]||'en-US';
+  u.onstart=()=>setState('speak');
+  u.onend=()=>{if(!recording&&!loading)setState('ready');};
+  window.speechSynthesis.speak(u);
+}
+function stopSpeaking(){if('speechSynthesis' in window)window.speechSynthesis.cancel();}
+function toggleVoice(){
+  voiceOn=!voiceOn;localStorage.setItem('vg_voice',voiceOn?'1':'0');
+  updateVoiceBtn();if(!voiceOn)stopSpeaking();
+}
+function updateVoiceBtn(){const b=document.getElementById('voice-toggle');if(!b)return;b.classList.toggle('on',voiceOn);b.textContent=voiceOn?'🔊':'🔈';}
 
 /* THEME */
 function applyTheme(t){
   theme=t;const c=THEMES[t];
   const r=document.documentElement.style;r.setProperty('--primary',c.primary);r.setProperty('--accent',c.accent);r.setProperty('--glow',c.glow);r.setProperty('--primary-40',c.primary+'60');
   const vc=document.getElementById('view-chat');if(vc){vc.style.background=c.bodyBg;vc.style.color=c.textColor;}
-  ['auth-page','chat-page'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.background=c.bodyBg;});
+  const cp=document.getElementById('chat-page');if(cp)cp.style.background=c.bodyBg;
   const mn=document.querySelector('.main');if(mn)mn.style.background=c.mainBg;
   const sb2=document.getElementById('sidebar');if(sb2){sb2.style.background=window.matchMedia('(max-width:640px)').matches?c.mobileSB:c.sidebarBg;sb2.style.borderRightColor=c.sidebarBorder;}
   const ch=document.querySelector('.chat-header');if(ch){ch.style.background=c.headerBg;ch.style.borderBottomColor=c.headerBorder;}
   const ia=document.querySelector('.input-area');if(ia){ia.style.background=c.inputAreaBg;ia.style.borderTopColor=c.headerBorder;}
   const ir=document.querySelector('.input-row');if(ir){ir.style.background=c.inputRowBg;ir.style.borderColor=c.inputRowBorder;}
   const ta=document.getElementById('msg-input');if(ta)ta.style.color=c.inputTextColor;
-  const card=document.querySelector('.card');if(card){card.style.background=c.cardBg;card.style.borderColor=c.cardBorder;card.style.color=c.textColor;}
-  document.querySelectorAll('.field input').forEach(el=>{el.style.color=c.inputTextColor;el.style.background=c.inputRowBg;el.style.borderColor=c.inputRowBorder;});
-  document.querySelectorAll('.card h1,.header-title,.brand-name').forEach(el=>el.style.color=c.textColor);
-  document.querySelectorAll('.card .sub,.header-sub,.brand-sub,.s-label,.sb-label,.user-name,.clear-btn').forEach(el=>el.style.color=c.textMuted);
+  document.querySelectorAll('.header-title,.brand-name').forEach(el=>el.style.color=c.textColor);
+  document.querySelectorAll('.header-sub,.brand-sub,.s-label,.sb-label,.clear-btn').forEach(el=>el.style.color=c.textMuted);
   const sp=document.getElementById('settings-panel');if(sp){sp.style.background=c.settingsBg;sp.style.borderColor=c.settingsBorder;}
   document.querySelectorAll('.preset').forEach(el=>{el.style.background=c.presetBg;el.style.borderColor=c.presetBorder;el.style.color=c.presetColor;});
   document.querySelectorAll('.sb-btn').forEach(el=>{el.style.background=c.sbBtnBg;el.style.borderColor=c.sbBtnBorder;el.style.color=c.textMuted;});
-  document.querySelectorAll('.brand,.user-row').forEach(el=>el.style.borderColor=c.sidebarBorder);
+  document.querySelectorAll('.brand').forEach(el=>el.style.borderColor=c.sidebarBorder);
   document.querySelectorAll('.blob').forEach((b,i)=>b.style.background=c.blobs[i]||c.blobs[0]);
   document.querySelectorAll('.bubble.bot').forEach(el=>{el.style.background=c.bubbleBotBg;el.style.borderColor=c.bubbleBotBorder;el.style.color=c.bubbleBotColor;});
   document.querySelectorAll('.bubble.user').forEach(el=>{el.style.background=c.primary;el.style.boxShadow=`0 4px 14px ${c.glow}`;el.style.color='#fff';});
@@ -626,7 +313,7 @@ function applyTheme(t){
   document.querySelectorAll('.typing span').forEach(s=>s.style.background=c.accent);
   const hov=c.dark?'rgba(255,255,255,.09)':'rgba(0,0,0,.07)';
   let st=document.getElementById('dyn-t');if(!st){st=document.createElement('style');st.id='dyn-t';document.head.appendChild(st);}
-  st.textContent=`.input-row textarea{color:${c.inputTextColor}!important;}.input-row textarea::placeholder{color:${c.ph}!important;}.field input::placeholder{color:${c.ph}!important;}.field input{color:${c.inputTextColor}!important;}.logout-btn,.c-hamburger,.sidebar-close{color:${c.textMuted}!important;}.back-site-btn,.back-btn{color:${c.textMuted}!important;border-color:${c.sidebarBorder}!important;background:${c.sbBtnBg}!important;}.lbtn{color:${c.textMuted}!important;border-color:${c.sidebarBorder}!important;}.lbtn.on,.lbtn:hover{color:#fff!important;background:${c.primary}!important;border-color:${c.primary}!important;}.preset:hover,.sb-btn:hover{background:${hov}!important;color:${c.textColor}!important;}.swatch.on{border-color:${c.textColor}!important;}`;
+  st.textContent=`.input-row textarea{color:${c.inputTextColor}!important;}.input-row textarea::placeholder{color:${c.ph}!important;}.lbtn{color:${c.textMuted}!important;border-color:${c.sidebarBorder}!important;}.lbtn.on,.lbtn:hover{color:#fff!important;background:${c.primary}!important;border-color:${c.primary}!important;}.preset:hover,.sb-btn:hover{background:${hov}!important;color:${c.textColor}!important;}.swatch.on{border-color:${c.textColor}!important;}.c-hamburger,.sidebar-close{color:${c.textMuted}!important;}`;
   document.querySelectorAll('.swatch').forEach(s=>s.classList.toggle('on',s.dataset.t===t));
   localStorage.setItem('vg_theme',t);
 }
@@ -635,18 +322,17 @@ function buildSwatches(){
   Object.entries(THEMES).forEach(([k,v])=>{const d=document.createElement('div');d.className='swatch'+(k===theme?' on':'');d.style.background=k==='white'?'#e5e7eb':v.primary;if(k==='white')d.style.border='2px solid #d1d5db';d.dataset.t=k;d.title=k;d.onclick=()=>applyTheme(k);w.appendChild(d);});
 }
 
-(async function init(){
+(function init(){
   function setVh(){document.documentElement.style.setProperty('--vh',window.innerHeight*.01+'px');}
   setVh();window.addEventListener('resize',setVh);
-  const saved = localStorage.getItem('vg_theme');
-  applyTheme(saved && saved !== 'white' ? saved : 'grey');
+  const saved=localStorage.getItem('vg_theme');
+  applyTheme(saved&&THEMES[saved]?saved:'grey');
   buildSwatches();buildPresets();updateLabels();
+  updateVoiceBtn();setState('ready');
+  loadMsgs();renderMsgs();
   const ta=document.getElementById('msg-input');
   ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}});
   ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,110)+'px';});
-  /* Проверяем активную сессию */
-  const {data:{session}}=await sb.auth.getSession();
-  if(session){currentUser=session.user.email.split('@')[0];currentUserId=session.user.id;}
 })();
 </script>
 </body>

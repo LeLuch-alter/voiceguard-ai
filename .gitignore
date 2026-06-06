@@ -1,0 +1,20 @@
+# Секреты и окружение
+.env
+.env.local
+.env.*.local
+
+# Зависимости (если появятся)
+node_modules/
+
+# Vercel
+.vercel/
+
+# Логи
+*.log
+npm-debug.log*
+
+# ОС / редакторы
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
