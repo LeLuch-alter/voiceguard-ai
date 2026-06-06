@@ -42,7 +42,6 @@ knowledge.md Company knowledge base (source of truth for AI)
 api/chat.js Proxy to GROQ (text responses) + knowledge base + tickets
 api/transcribe.js Speech recognition via GROQ Whisper
 api/escalate.js Escalation to an operator (notification in Telegram)
-api/geo.js Country detection for auto-language (CIS — Russian, otherwise English)
 vercel.json Security headers
 .env.example Example of environment variables
 ROADMAP.md Work plan

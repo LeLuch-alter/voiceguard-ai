@@ -152,7 +152,7 @@ body{font-family:var(--font);overflow-x:hidden}
       <div class="spacer"></div>
       <div id="settings-panel" class="settings-panel" style="display:none">
         <div><div class="s-label">Тема</div><div class="swatches" id="swatches"></div></div>
-        <div><div class="s-label">Язык</div><div class="lang-row"><button class="lbtn on" onclick="setLang('ru',this)">RU</button><button class="lbtn" onclick="setLang('en',this)">EN</button><button class="lbtn" onclick="setLang('kz',this)">KZ</button></div></div>
+        <div><div class="s-label">Язык</div><div class="lang-row"><button class="lbtn" onclick="setLang('ru',this)">RU</button><button class="lbtn on" onclick="setLang('en',this)">EN</button><button class="lbtn" onclick="setLang('kz',this)">KZ</button></div></div>
         <div><div class="s-label" id="lbl-privacy">Приватность</div><label class="pv-switch"><span id="lbl-persist">Хранить историю</span><input type="checkbox" id="cb-persist" onchange="togglePersist()"/></label><button class="pv-textlink" id="btn-privacy" onclick="showPrivacy()">Политика приватности</button></div>
       </div>
       <button class="sb-btn" onclick="showEscalation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg> <span id="sb-operator">Связаться с оператором</span></button>
@@ -230,7 +230,7 @@ const ESC={
   kz:{title:'Оператормен байланысу',text:'Атыңыз бен телефоныңызды қалдырыңыз — оператор жақын арада хабарласады.',name:'Атыңыз',phone:'Телефон',msg:'Хабарлама (міндетті емес)',send:'Жіберу',cancel:'Бас тарту',operator:'Оператормен байланысу',ename:'Атыңызды енгізіңіз',ephone:'Дұрыс нөмір енгізіңіз',sending:'Жіберілуде...',done:'Дайын! Байланыс деректеріңізді операторға бердім — жақын арада хабарласады.'},
 };
 
-let cLang='ru',theme='grey',msgs=[],loading=false;
+let cLang='en',theme='grey',msgs=[],loading=false;
 let voiceOn=localStorage.getItem('vg_voice')==='1';
 let persist=localStorage.getItem('vg_persist')!=='0';
 let mediaRecorder=null,audioChunks=[],recording=false;
@@ -262,8 +262,6 @@ const LANG_ORDER=['ru','en','kz'];
 function setActiveLang(l){document.querySelectorAll('.lbtn').forEach((b,i)=>b.classList.toggle('on',LANG_ORDER[i]===l));}
 function applyLang(l){cLang=l;setActiveLang(l);buildPresets();updateLabels();if(msgs.length>0&&msgs[0].role==='assistant'){msgs[0].text=LANGS[l].welcome;saveMsgs();renderMsgs();}if(!recording&&!loading)setState('ready');}
 function setLang(l){applyLang(l);localStorage.setItem('vg_lang',l);}
-function browserLang(){const cis=['ru','be','uk','kk','ky','uz','tg','hy','az','tk'];const list=(navigator.languages||[navigator.language||'en']).map(s=>String(s||'').slice(0,2).toLowerCase());return list.some(c=>cis.includes(c))?'ru':'en';}
-async function detectGeoLang(){try{const r=await fetch('/api/geo');const d=await r.json();const cc=String(d.country||'').toUpperCase();if(!cc)return;const CIS=['RU','BY','KZ','KG','UZ','TJ','AM','AZ','MD','UA','TM'];const lang=CIS.includes(cc)?'ru':'en';if(lang!==cLang)applyLang(lang);}catch(e){}}
 function updateLabels(){const L=LANGS[cLang];const ta=document.getElementById('msg-input');if(ta)ta.placeholder=L.ph;const ss=document.getElementById('sb-settings');if(ss)ss.textContent=L.settings;const sc=document.getElementById('sb-clear');if(sc)sc.textContent=L.clear;const hc=document.getElementById('hdr-clear');if(hc)hc.textContent=L.clear;const P=PV[cLang]||PV.en;const lp=document.getElementById('lbl-privacy');if(lp)lp.textContent=P.privacy;const lpe=document.getElementById('lbl-persist');if(lpe)lpe.textContent=P.persist;const bp=document.getElementById('btn-privacy');if(bp)bp.textContent=P.ptitle;const E=ESC[cLang]||ESC.en;const so=document.getElementById('sb-operator');if(so)so.textContent=E.operator;}
 function buildPresets(){const w=document.getElementById('presets');if(!w)return;w.innerHTML='';LANGS[cLang].presets.forEach(q=>{const b=document.createElement('button');b.className='preset';b.textContent=q;b.onclick=()=>{sendMsg(q);closeSB();};w.appendChild(b);});}
 
@@ -494,13 +492,12 @@ function buildSwatches(){
   const saved=localStorage.getItem('vg_theme');
   applyTheme(saved&&THEMES[saved]?saved:'grey');
   const savedLang=localStorage.getItem('vg_lang');
-  cLang=savedLang||browserLang();setActiveLang(cLang);
+  cLang=savedLang||'en';setActiveLang(cLang);
   buildSwatches();buildPresets();updateLabels();
   updateVoiceBtn();setState('ready');
   const cbp=document.getElementById('cb-persist');if(cbp)cbp.checked=persist;
   if('speechSynthesis' in window){loadVoices();window.speechSynthesis.onvoiceschanged=loadVoices;}
   loadMsgs();renderMsgs();
-  if(!savedLang)detectGeoLang();
   const ta=document.getElementById('msg-input');
   ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}});
   ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,110)+'px';});
