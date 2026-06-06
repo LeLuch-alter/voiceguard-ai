@@ -113,6 +113,13 @@ body{font-family:var(--font);overflow-x:hidden}
 .pv-cancel:hover{opacity:1}
 .pv-ok{background:var(--primary);color:#fff}
 .pv-ok:hover{filter:brightness(1.08)}
+.pv-ok:disabled{opacity:.6;cursor:not-allowed}
+.esc-field{margin-bottom:.7rem;text-align:left}
+.esc-field label{display:block;font-size:.72rem;opacity:.7;margin-bottom:.3rem}
+.esc-field input,.esc-field textarea{width:100%;border-radius:9px;padding:.6rem .8rem;font-family:'Sora',sans-serif;font-size:.83rem;outline:none;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:inherit}
+.esc-field input:focus,.esc-field textarea:focus{border-color:var(--primary)}
+.esc-field textarea{resize:none;min-height:54px}
+.esc-err{color:#f87171;font-size:.72rem;margin:-.1rem 0 .6rem;min-height:.9rem;text-align:left}
 @media(max-width:640px){
   .sidebar{position:fixed;left:0;top:0;height:100vh;transform:translateX(-100%);box-shadow:4px 0 32px rgba(0,0,0,.6);overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   .sidebar.open{transform:translateX(0)}
@@ -148,6 +155,7 @@ body{font-family:var(--font);overflow-x:hidden}
         <div><div class="s-label">Язык</div><div class="lang-row"><button class="lbtn on" onclick="setLang('ru',this)">RU</button><button class="lbtn" onclick="setLang('en',this)">EN</button><button class="lbtn" onclick="setLang('kz',this)">KZ</button></div></div>
         <div><div class="s-label" id="lbl-privacy">Приватность</div><label class="pv-switch"><span id="lbl-persist">Хранить историю</span><input type="checkbox" id="cb-persist" onchange="togglePersist()"/></label><button class="pv-textlink" id="btn-privacy" onclick="showPrivacy()">Политика приватности</button></div>
       </div>
+      <button class="sb-btn" onclick="showEscalation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg> <span id="sb-operator">Связаться с оператором</span></button>
       <button class="sb-btn" onclick="toggleSettings()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> <span id="sb-settings">Настройки</span></button>
       <button class="sb-btn" onclick="clearChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg> <span id="sb-clear">Очистить чат</span></button>
     </div>
@@ -177,6 +185,19 @@ body{font-family:var(--font);overflow-x:hidden}
   </div>
 </div>
 
+<div class="pv-overlay" id="esc-overlay" onclick="if(event.target===this)closeEsc()">
+  <div class="pv-card" id="esc-card">
+    <div class="pv-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg></div>
+    <h3 id="esc-title">Связаться с оператором</h3>
+    <p id="esc-text">Оставьте имя и телефон — оператор свяжется с вами в ближайшее время.</p>
+    <div class="esc-field"><label id="esc-l-name">Ваше имя</label><input id="esc-name" type="text" autocomplete="name"/></div>
+    <div class="esc-field"><label id="esc-l-phone">Телефон</label><input id="esc-phone" type="tel" autocomplete="tel" placeholder="+7 ..."/></div>
+    <div class="esc-field"><label id="esc-l-msg">Сообщение (необязательно)</label><textarea id="esc-msg" rows="2"></textarea></div>
+    <div class="esc-err" id="esc-err"></div>
+    <div class="pv-actions"><button class="pv-cancel" id="esc-cancel" onclick="closeEsc()">Отмена</button><button class="pv-ok" id="esc-send" onclick="submitEscalation()">Отправить</button></div>
+  </div>
+</div>
+
 <script>
 const STORE_KEY='vg_messages';
 const THEMES={
@@ -202,6 +223,11 @@ const PV={
   ru:{title:'Доступ к микрофону',ptitle:'Политика приватности',text:'Голос используется только для распознавания речи и сразу удаляется — на сервере он не сохраняется. История переписки хранится только локально на вашем устройстве; её можно отключить или очистить в любой момент.',ok:'Разрешить',cancel:'Отмена',close:'Понятно',privacy:'Приватность',persist:'Хранить историю'},
   en:{title:'Microphone access',ptitle:'Privacy policy',text:'Your voice is used only for speech recognition and is discarded immediately — nothing is stored on the server. Chat history is kept locally on your device only; you can disable or clear it anytime.',ok:'Allow',cancel:'Cancel',close:'Got it',privacy:'Privacy',persist:'Keep history'},
   kz:{title:'Микрофонға рұқсат',ptitle:'Құпиялылық саясаты',text:'Дауысыңыз тек сөзді тану үшін қолданылады және бірден жойылады — серверде сақталмайды. Чат тарихы тек құрылғыңызда сақталады; оны кез келген уақытта өшіруге не тазалауға болады.',ok:'Рұқсат',cancel:'Бас тарту',close:'Түсінікті',privacy:'Құпиялылық',persist:'Тарихты сақтау'},
+};
+const ESC={
+  ru:{title:'Связаться с оператором',text:'Оставьте имя и телефон — оператор свяжется с вами в ближайшее время.',name:'Ваше имя',phone:'Телефон',msg:'Сообщение (необязательно)',send:'Отправить',cancel:'Отмена',operator:'Связаться с оператором',ename:'Введите имя',ephone:'Введите корректный номер',sending:'Отправка...',done:'Готово! Я передал ваши контакты оператору — с вами свяжутся в ближайшее время.'},
+  en:{title:'Talk to an operator',text:'Leave your name and phone — an operator will contact you shortly.',name:'Your name',phone:'Phone',msg:'Message (optional)',send:'Send',cancel:'Cancel',operator:'Talk to an operator',ename:'Enter your name',ephone:'Enter a valid number',sending:'Sending...',done:'Done! I have passed your contacts to an operator — they will reach out shortly.'},
+  kz:{title:'Оператормен байланысу',text:'Атыңыз бен телефоныңызды қалдырыңыз — оператор жақын арада хабарласады.',name:'Атыңыз',phone:'Телефон',msg:'Хабарлама (міндетті емес)',send:'Жіберу',cancel:'Бас тарту',operator:'Оператормен байланысу',ename:'Атыңызды енгізіңіз',ephone:'Дұрыс нөмір енгізіңіз',sending:'Жіберілуде...',done:'Дайын! Байланыс деректеріңізді операторға бердім — жақын арада хабарласады.'},
 };
 
 let cLang='ru',theme='grey',msgs=[],loading=false;
@@ -233,7 +259,7 @@ function openSB(){document.getElementById('sidebar').classList.add('open');docum
 function closeSB(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('show');}
 function toggleSettings(){const p=document.getElementById('settings-panel');p.style.display=p.style.display==='none'?'flex':'none';p.style.flexDirection='column';}
 function setLang(l,btn){cLang=l;document.querySelectorAll('.lbtn').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');buildPresets();updateLabels();if(msgs.length>0&&msgs[0].role==='assistant'){msgs[0].text=LANGS[l].welcome;saveMsgs();renderMsgs();}if(!recording&&!loading)setState('ready');}
-function updateLabels(){const L=LANGS[cLang];const ta=document.getElementById('msg-input');if(ta)ta.placeholder=L.ph;const ss=document.getElementById('sb-settings');if(ss)ss.textContent=L.settings;const sc=document.getElementById('sb-clear');if(sc)sc.textContent=L.clear;const hc=document.getElementById('hdr-clear');if(hc)hc.textContent=L.clear;const P=PV[cLang]||PV.en;const lp=document.getElementById('lbl-privacy');if(lp)lp.textContent=P.privacy;const lpe=document.getElementById('lbl-persist');if(lpe)lpe.textContent=P.persist;const bp=document.getElementById('btn-privacy');if(bp)bp.textContent=P.ptitle;}
+function updateLabels(){const L=LANGS[cLang];const ta=document.getElementById('msg-input');if(ta)ta.placeholder=L.ph;const ss=document.getElementById('sb-settings');if(ss)ss.textContent=L.settings;const sc=document.getElementById('sb-clear');if(sc)sc.textContent=L.clear;const hc=document.getElementById('hdr-clear');if(hc)hc.textContent=L.clear;const P=PV[cLang]||PV.en;const lp=document.getElementById('lbl-privacy');if(lp)lp.textContent=P.privacy;const lpe=document.getElementById('lbl-persist');if(lpe)lpe.textContent=P.persist;const bp=document.getElementById('btn-privacy');if(bp)bp.textContent=P.ptitle;const E=ESC[cLang]||ESC.en;const so=document.getElementById('sb-operator');if(so)so.textContent=E.operator;}
 function buildPresets(){const w=document.getElementById('presets');if(!w)return;w.innerHTML='';LANGS[cLang].presets.forEach(q=>{const b=document.createElement('button');b.className='preset';b.textContent=q;b.onclick=()=>{sendMsg(q);closeSB();};w.appendChild(b);});}
 
 function renderMsgs(){
@@ -279,7 +305,7 @@ async function sendMsg(preset,viaVoice){
   if(reply&&(voiceOn||viaVoice))speak(reply);
 }
 
-/* VOICE: запись -> STT -> чат */
+/* VOICE: record -> STT -> chat */
 function setState(key){const el=document.getElementById('header-sub');if(el)el.textContent=(STATES[cLang]||STATES.en)[key]||'';}
 function setMicRec(on){const b=document.getElementById('mic-btn');if(b)b.classList.toggle('rec',on);}
 
@@ -291,7 +317,7 @@ function toggleMic(){
   startMic();
 }
 
-/* Согласие на микрофон / политика приватности */
+/* Microphone consent / privacy policy */
 function openPv(mode){
   const t=PV[cLang]||PV.en,c=THEMES[theme],ov=document.getElementById('pv-overlay'),card=document.getElementById('pv-card');
   document.getElementById('pv-title').textContent=mode==='ask'?t.title:t.ptitle;
@@ -306,6 +332,43 @@ function showConsent(){openPv('ask');}
 function showPrivacy(){closeSB();openPv('info');}
 function closePv(){document.getElementById('pv-overlay').classList.remove('open');}
 function allowMic(){localStorage.setItem('vg_mic_consent','1');closePv();startMic();}
+
+/* Escalation to a human operator */
+function showEscalation(){
+  closeSB();
+  const t=ESC[cLang]||ESC.en,c=THEMES[theme];
+  document.getElementById('esc-title').textContent=t.title;
+  document.getElementById('esc-text').textContent=t.text;
+  document.getElementById('esc-l-name').textContent=t.name;
+  document.getElementById('esc-l-phone').textContent=t.phone;
+  document.getElementById('esc-l-msg').textContent=t.msg;
+  document.getElementById('esc-send').textContent=t.send;
+  document.getElementById('esc-cancel').textContent=t.cancel;
+  document.getElementById('esc-err').textContent='';
+  const card=document.getElementById('esc-card');
+  card.style.background=c.cardBg;card.style.color=c.textColor;card.style.borderColor=c.cardBorder;
+  ['esc-name','esc-phone','esc-msg'].forEach(id=>{const el=document.getElementById(id);el.style.background=c.inputRowBg;el.style.borderColor=c.inputRowBorder;el.style.color=c.inputTextColor;});
+  document.getElementById('esc-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('esc-name').focus(),60);
+}
+function closeEsc(){document.getElementById('esc-overlay').classList.remove('open');}
+async function submitEscalation(){
+  const t=ESC[cLang]||ESC.en;
+  const name=document.getElementById('esc-name').value.trim();
+  const phone=document.getElementById('esc-phone').value.trim();
+  const message=document.getElementById('esc-msg').value.trim();
+  const err=document.getElementById('esc-err');
+  if(!name){err.textContent=t.ename;return;}
+  if(phone.replace(/\D/g,'').length<10){err.textContent=t.ephone;return;}
+  const btn=document.getElementById('esc-send');btn.disabled=true;btn.textContent=t.sending;
+  try{await fetch('/api/escalate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,message,history:msgs.slice(-10)})});}catch(e){}
+  btn.disabled=false;btn.textContent=t.send;
+  document.getElementById('esc-name').value='';document.getElementById('esc-phone').value='';document.getElementById('esc-msg').value='';
+  closeEsc();
+  stopSpeaking();
+  msgs.push({role:'assistant',text:t.done,id:Date.now()});saveMsgs();renderMsgs();
+  if(voiceOn)speak(t.done);
+}
 
 async function startMic(){
   try{
@@ -324,7 +387,7 @@ async function startMic(){
 }
 function stopRec(){if(mediaRecorder&&recording){recording=false;setMicRec(false);stopVAD();try{mediaRecorder.stop();}catch(e){}}}
 
-/* VAD: авто-стоп записи по тишине */
+/* VAD: auto-stop recording on silence */
 function startVAD(stream){
   try{
     const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
@@ -364,7 +427,7 @@ async function transcribeAndSend(blob){
   }catch(e){document.getElementById('mic-btn').disabled=false;setState('ready');}
 }
 
-/* VOICE: озвучка ответов (TTS) */
+/* VOICE: speak replies (TTS) */
 function loadVoices(){if('speechSynthesis' in window)ttsVoices=window.speechSynthesis.getVoices()||[];}
 function pickVoice(lang){
   const pref=(SR_LANG[lang]||'en-US').toLowerCase(),base=pref.split('-')[0];

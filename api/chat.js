@@ -1,5 +1,16 @@
-// Ограничение CORS: по умолчанию разрешаем только localhost и *.vercel.app.
-// Для своего домена задайте ALLOWED_ORIGINS (через запятую) в переменных окружения.
+import { readFileSync } from 'fs';
+
+// Company knowledge base is loaded from knowledge.md (editable without changing code).
+// Read once on cold start and cached.
+let COMPANY_KNOWLEDGE = '';
+try {
+  COMPANY_KNOWLEDGE = readFileSync(new URL('../knowledge.md', import.meta.url), 'utf8').slice(0, 12000).trim();
+} catch (e) {
+  COMPANY_KNOWLEDGE = '';
+}
+
+// CORS restriction: by default allow only localhost and *.vercel.app.
+// For your own domain set ALLOWED_ORIGINS (comma-separated) in environment variables.
 function applyCors(req, res) {
   const allowed = (process.env.ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
   const origin = req.headers.origin;
@@ -27,8 +38,8 @@ async function sendTelegram(text) {
   });
 }
 
-// Приватность: сообщения не логируются и нигде не сохраняются на сервере —
-// функция без состояния, просто проксирует запрос в GROQ.
+// Privacy: messages are not logged or stored anywhere on the server —
+// stateless function, it simply proxies the request to GROQ.
 export default async function handler(req, res) {
   applyCors(req, res);
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -39,7 +50,7 @@ export default async function handler(req, res) {
 
   const { message, history = [], lang = 'en' } = req.body || {};
 
-  // Защита от слишком больших/некорректных запросов.
+  // Guard against oversized/invalid requests.
   if (typeof message !== 'string' || !message.trim() || message.length > 4000) {
     return res.status(400).json({ reply: 'Некорректное сообщение.' });
   }
@@ -49,7 +60,7 @@ export default async function handler(req, res) {
     lang === 'kz' ? 'Always respond in Kazakh.' :
     'Always respond in English.';
 
-  // Название компании можно переопределить переменной окружения COMPANY_NAME.
+  // Company name can be overridden via the COMPANY_NAME environment variable.
   const companyName = process.env.COMPANY_NAME || 'компании';
 
   const systemPrompt = `Ты — вежливый и профессиональный ИИ-оператор ${companyName}.
@@ -58,8 +69,10 @@ export default async function handler(req, res) {
   ${langNote}
 
   --- ПРАВИЛА ОБЩЕНИЯ ---
+  - Используй информацию из раздела «БАЗА ЗНАНИЙ КОМПАНИИ» (ниже) как основной источник правды.
   - Отвечай только в рамках информации о компании, её услугах и заявках.
-  - Если ты не знаешь точную информацию (например, конкретную цену или наличие) — не выдумывай. Скажи, что уточнишь у менеджера, и предложи оставить заявку.
+  - Если точной информации нет в базе знаний (например, конкретной цены или наличия) — не выдумывай. Скажи, что уточнишь у менеджера, и предложи оставить заявку.
+  - Если клиент просит соединить с человеком/оператором, недоволен или ты не можешь помочь после нескольких попыток — предложи связаться с живым оператором (кнопка «Связаться с оператором» в меню) и оставить имя и номер телефона.
   - Всегда вежлив, спокоен и профессионален.
   - Когда клиент хочет оставить заявку или чтобы с ним связались — ОБЯЗАТЕЛЬНО сначала спроси его имя и номер телефона. Не говори "менеджер свяжется", пока не получил имя и номер.
   - После того как клиент дал имя и номер — подтверди заявку и скажи, что менеджер свяжется с ним в ближайшее время.
@@ -69,8 +82,12 @@ export default async function handler(req, res) {
   - Если вопрос не по теме компании — вежливо переведи разговор обратно к услугам.
   - Всегда отвечай на языке клиента.`;
 
+  const knowledgeBlock = COMPANY_KNOWLEDGE
+    ? `\n\n--- БАЗА ЗНАНИЙ КОМПАНИИ (источник правды) ---\n${COMPANY_KNOWLEDGE}`
+    : '';
+
   const messages = [
-    { role: 'system', content: systemPrompt },
+    { role: 'system', content: systemPrompt + knowledgeBlock },
     ...history.slice(-10).map(m => ({
       role: m.role === 'assistant' ? 'assistant' : 'user',
       content: m.text || m.content || '',
@@ -102,7 +119,7 @@ export default async function handler(req, res) {
     const reply = data.choices?.[0]?.message?.content
       || "Sorry, I couldn't process that. Please try again.";
 
-    // Если клиент оставил телефон — отправляем уведомление в Telegram
+    // If the client left a phone number — send a Telegram notification
     const hasPhone = /(\+?7|8)[\s\-]?\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}/.test(message);
     if (hasPhone) {
       await sendTelegram(

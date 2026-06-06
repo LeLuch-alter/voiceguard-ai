@@ -1,11 +1,11 @@
-// Распознавание речи (STT) через GROQ Whisper.
-// Принимает POST { audio: base64, mime: string, lang: 'ru'|'en'|'kz' }
-// и возвращает { text }. Аудио на сервере не сохраняется.
+// Speech-to-text (STT) via GROQ Whisper.
+// Accepts POST { audio: base64, mime: string, lang: 'ru'|'en'|'kz' }
+// and returns { text }. Audio is not stored on the server.
 
-// ISO-639-1 коды для подсказки языка Whisper. kz -> kk (казахский).
+// ISO-639-1 codes to hint Whisper's language. kz -> kk (Kazakh).
 const LANG_MAP = { ru: 'ru', en: 'en', kz: 'kk' };
 
-// Расширение файла по mime — OpenAI/GROQ определяют формат по имени файла.
+// File extension from mime — OpenAI/GROQ detect the format by file name.
 function extFromMime(mime = '') {
   if (mime.includes('mp4') || mime.includes('m4a') || mime.includes('aac')) return 'm4a';
   if (mime.includes('mpeg') || mime.includes('mp3')) return 'mp3';
@@ -14,8 +14,8 @@ function extFromMime(mime = '') {
   return 'webm';
 }
 
-// Ограничение CORS: по умолчанию только localhost и *.vercel.app.
-// Свой домен — через переменную ALLOWED_ORIGINS (список через запятую).
+// CORS restriction: by default only localhost and *.vercel.app.
+// Your own domain — via the ALLOWED_ORIGINS variable (comma-separated list).
 function applyCors(req, res) {
   const allowed = (process.env.ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
   const origin = req.headers.origin;
@@ -32,8 +32,8 @@ function applyCors(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
 
-// Приватность: аудио используется только для распознавания и нигде не сохраняется —
-// после ответа GROQ буфер исчезает вместе с завершением функции.
+// Privacy: audio is used only for recognition and is never stored —
+// the buffer disappears when the function finishes after GROQ responds.
 export default async function handler(req, res) {
   applyCors(req, res);
   if (req.method === 'OPTIONS') return res.status(200).end();
